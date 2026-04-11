@@ -77,10 +77,13 @@
       border: 1.5px solid var(--gold);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Cinzel', serif;
-      font-size: 13px; font-weight: 700;
-      color: var(--gold);
-      letter-spacing: 0.05em;
+      overflow: hidden;
+      background: var(--dark);
+    }
+    .nav-logo-icon img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
     }
     .nav-logo-text {
       font-family: 'Cinzel', serif;
@@ -406,13 +409,16 @@
 <!-- LOADER -->
 <div id="loader">
   <div class="loader-ring"></div>
-  <p class="loader-text">BEC — Loading</p>
+  <p class="loader-text">KBEC loading</p>
 </div>
 
 <!-- NAVBAR -->
 <nav id="navbar">
   <a href="#" class="nav-logo">
-    <div class="nav-logo-icon">BEC</div>
+    <div class="nav-logo-icon">
+      <!-- Club logo image (replace file if logo asset name changes) -->
+      <img src="club-logo.png" alt="KUET BEC Logo" />
+    </div>
     <div class="nav-logo-text">
       Business & Entrepreneurship Club
       <span>KUET</span>
@@ -469,13 +475,9 @@
 
   <!-- Main Content -->
   <div class="hero-content">
-    <div class="hero-badge">
-      <div class="hero-badge-line"></div>
-      <span class="hero-badge-text">KUET · Est. 2015 · Khulna</span>
-    </div>
-
+    <!-- title customized to show KUET before the main club name -->
     <h1 class="hero-title">
-      <span class="line-dim">Business &</span>
+      <span class="line-gold">KUET</span> <span class="line-dim">Business &</span>
       Entrepreneurship<br/>
       <span class="line-gold">Club</span>
     </h1>
@@ -527,6 +529,7 @@
 
 <script>
   // ── LOADER ──
+  // Wait for full page load, then fade out the loader for a smoother first impression.
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('loader').classList.add('hidden');
@@ -535,6 +538,7 @@
 
   // ── NAVBAR SCROLL ──
   const navbar = document.getElementById('navbar');
+  // Add a glassy background once user scrolls down so links stay readable on the hero image.
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 40);
   });
@@ -542,10 +546,12 @@
   // ── HAMBURGER ──
   const hamburger = document.getElementById('hamburger');
   const mobileMenu = document.getElementById('mobileMenu');
+  // Toggle both icon animation and mobile menu visibility with one click.
   hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('open');
     mobileMenu.classList.toggle('open');
   });
+  // Close mobile menu automatically after selecting any menu item.
   mobileMenu.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', () => {
       hamburger.classList.remove('open');
@@ -556,12 +562,14 @@
   // ── MARQUEE ──
   const items = ['Case Competition', 'Tech Fest', 'Workshop Series', 'Networking Night', 'Best Club 2025', 'Innovation Summit', 'Pitch Battle'];
   const track = document.getElementById('marqueeTrack');
+  // Duplicate the list several times so the CSS marquee can loop continuously without gaps.
   const doubled = [...items, ...items, ...items, ...items];
   doubled.forEach(t => {
     track.innerHTML += `<span class="marquee-item">${t}<span class="marquee-dot"></span></span>`;
   });
 
   // ── ANIMATED COUNTERS ──
+  // Counts from 0 to target using an ease-out curve for a polished stat reveal.
   function animateCounter(el, target, duration = 1800) {
     let start = null;
     const step = ts => {
@@ -577,6 +585,7 @@
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
+        // Start each counter only when it becomes visible on screen.
         const target = parseInt(e.target.dataset.target);
         animateCounter(e.target, target);
         observer.unobserve(e.target);
