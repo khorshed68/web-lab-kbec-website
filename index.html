@@ -380,6 +380,193 @@
     .marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--dark-2); opacity: 0.4; }
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+    /* ── OUR STORY ── */
+    #about {
+      position: relative;
+      padding: 110px 48px 120px;
+      background:
+        radial-gradient(circle at 82% 22%, rgba(201,168,76,0.1), transparent 38%),
+        radial-gradient(circle at 22% 75%, rgba(201,168,76,0.06), transparent 45%),
+        var(--dark);
+      overflow: hidden;
+    }
+    #about::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,168,76,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,168,76,0.05) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .about-wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 64px;
+      align-items: start;
+    }
+    .about-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 22px;
+    }
+    .about-eyebrow::before {
+      content: '';
+      width: 42px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .about-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(40px, 4.8vw, 64px);
+      line-height: 1.06;
+      margin-bottom: 20px;
+      max-width: 620px;
+    }
+    .about-divider {
+      width: 38px;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 24px;
+    }
+    .about-copy {
+      max-width: 600px;
+      color: rgba(245,237,216,0.62);
+      font-size: 16px;
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+    .about-grid {
+      margin-top: 30px;
+      max-width: 720px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(210px, 1fr));
+      gap: 14px;
+    }
+    .about-card {
+      border: 1px solid rgba(201,168,76,0.22);
+      border-radius: 12px;
+      padding: 18px 16px 16px;
+      background: linear-gradient(150deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+      transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .about-card:hover {
+      border-color: rgba(201,168,76,0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 28px rgba(0,0,0,0.34);
+    }
+    .about-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+      background: rgba(201,168,76,0.14);
+    }
+    .about-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .about-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(245,237,216,0.54);
+    }
+    .about-panel {
+      position: relative;
+      min-height: 540px;
+      border-radius: 16px;
+      border: 1px solid rgba(201,168,76,0.2);
+      background:
+        radial-gradient(circle at 28% 22%, rgba(201,168,76,0.15), transparent 48%),
+        linear-gradient(165deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 30px 60px rgba(0,0,0,0.45);
+    }
+    .about-panel-mark {
+      width: 192px;
+      height: 192px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.35);
+      box-shadow: 0 0 0 10px rgba(201,168,76,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      color: var(--gold-light);
+      font-family: 'Cinzel', serif;
+      font-size: 30px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .about-panel-mark span {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .about-panel-mark small {
+      font-size: 20px;
+      letter-spacing: 0.06em;
+      color: rgba(245,237,216,0.82);
+    }
+    .about-badge {
+      position: absolute;
+      left: -26px;
+      bottom: 22px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(201,168,76,0.3);
+      background: rgba(10,8,4,0.92);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 232px;
+      box-shadow: 0 18px 32px rgba(0,0,0,0.45);
+    }
+    .about-badge-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(201,168,76,0.14);
+      color: var(--gold-light);
+      flex-shrink: 0;
+    }
+    .about-badge strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 4px;
+      font-family: 'Cinzel', serif;
+    }
+    .about-badge p {
+      font-size: 12px;
+      color: rgba(245,237,216,0.55);
+      letter-spacing: 0.05em;
+    }
+
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -397,10 +584,36 @@
       #hero { padding: 0 24px 120px; }
       .hero-stats { display: none; }
       .hero-title { font-size: clamp(38px, 10vw, 60px); }
+      #about { padding: 86px 24px 90px; }
+      .about-wrap {
+        grid-template-columns: 1fr;
+        gap: 34px;
+      }
+      .about-panel {
+        min-height: 420px;
+      }
+      .about-badge {
+        left: 16px;
+        bottom: 16px;
+      }
     }
     @media (max-width: 480px) {
       .btn-primary, .btn-ghost { padding: 14px 28px; width: 100%; text-align: center; justify-content: center; }
       .hero-actions { flex-direction: column; }
+      .about-title { font-size: clamp(32px, 10vw, 44px); }
+      .about-copy { font-size: 15px; line-height: 1.8; }
+      .about-grid { grid-template-columns: 1fr; }
+      .about-panel { min-height: 360px; }
+      .about-panel-mark {
+        width: 150px;
+        height: 150px;
+      }
+      .about-panel-mark span { font-size: 24px; }
+      .about-panel-mark small { font-size: 16px; }
+      .about-badge {
+        position: static;
+        margin: 18px;
+      }
     }
   </style>
 </head>
@@ -517,6 +730,95 @@
   <div class="scroll-hint">
     <span>Scroll</span>
     <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="about-content">
+      <p class="about-eyebrow">Our Story</p>
+      <h2 class="about-title">Cultivating Leaders, Shaping Futures</h2>
+      <div class="about-divider"></div>
+
+      <p class="about-copy">
+        The Business &amp; Entrepreneurship Club at KUET is a student-driven organization dedicated to fostering business acumen, entrepreneurial mindset, and professional excellence among engineering students.
+      </p>
+      <p class="about-copy">
+        Since our founding, we have organized 100+ events, connected students with industry leaders, and launched numerous successful student ventures that continue to make an impact beyond campus walls.
+      </p>
+
+      <div class="about-grid">
+        <article class="about-card">
+          <div class="about-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M12 3c2.8 0 5 2.2 5 5 0 1.8-.9 3.3-2.3 4.2-.6.4-1 .9-1.2 1.5l-.5 1.3h-2l-.5-1.3c-.2-.6-.6-1.1-1.2-1.5C7.9 11.3 7 9.8 7 8c0-2.8 2.2-5 5-5Zm-2 14h4M9.5 20h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Innovation</h3>
+          <p>Driving creative thinking and novel solutions to real-world business challenges.</p>
+        </article>
+
+        <article class="about-card">
+          <div class="about-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M4 12h4l2 2 4-4 2 2h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 8V5m0 0l2 2m-2-2-2 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Networking</h3>
+          <p>Connecting students with mentors, alumni, and industry professionals.</p>
+        </article>
+
+        <article class="about-card">
+          <div class="about-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M4 16V8m5 8V4m5 12v-6m5 6v-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Growth</h3>
+          <p>Enabling personal and professional development through curated programs.</p>
+        </article>
+
+        <article class="about-card">
+          <div class="about-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+              <path d="M12 4l2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.3-4.5 2.3.9-5L4.8 9.2l5-.7L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3>Excellence</h3>
+          <p>Pursuing the highest standards in everything we do, together.</p>
+        </article>
+      </div>
+    </div>
+
+    <div class="about-panel">
+      <div class="about-panel-mark" aria-hidden="true">
+        <span>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M14 4c2.6.2 4.8 2.4 5 5l-5.8 5.8-4.5.9.9-4.5L14 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M9.6 11.2 7 13.8l-1.4-.3-.3-1.4 2.6-2.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13.3 7.2h.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 18c1.6-.2 2.6-1.1 2.8-2.8C7.1 15.4 6.2 16.4 6 18Z" fill="currentColor"/>
+          </svg>
+        </span>
+        <small>BEC KUET</small>
+      </div>
+
+      <div class="about-badge">
+        <div class="about-badge-icon" aria-hidden="true">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+            <circle cx="8" cy="9" r="3" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="16" cy="9" r="3" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M3 20c0-2.6 2.4-4 5-4s5 1.4 5 4M11 20c0-2.2 2.1-3.4 4.5-3.4S20 17.8 20 20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <strong>500+</strong>
+          <p>Active Members Across all departments</p>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
