@@ -751,6 +751,125 @@
       color: var(--gold);
       opacity: 0.85;
     }
+    .event-card-actions {
+      margin-top: 12px;
+    }
+    .event-register-btn {
+      border: 1px solid rgba(201,168,76,0.38);
+      border-radius: 999px;
+      background: rgba(201,168,76,0.1);
+      color: var(--gold-light);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+    .event-register-btn:hover {
+      background: var(--gold);
+      color: var(--dark);
+      border-color: var(--gold);
+    }
+    .event-registration-panel {
+      margin-top: 28px;
+      border: 1px solid rgba(201,168,76,0.24);
+      border-radius: 14px;
+      padding: 22px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+    }
+    .event-registration-panel[hidden] {
+      display: none;
+    }
+    .event-registration-panel h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 2vw, 30px);
+      margin-bottom: 8px;
+    }
+    .event-registration-panel p {
+      color: rgba(245,237,216,0.52);
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .event-registration-form {
+      display: grid;
+      gap: 14px;
+    }
+    .event-registration-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .event-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .event-field label {
+      color: rgba(245,237,216,0.72);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .event-field input,
+    .event-field select,
+    .event-field textarea {
+      width: 100%;
+      border: 1px solid rgba(201,168,76,0.24);
+      border-radius: 8px;
+      background: rgba(10,8,4,0.56);
+      color: var(--text);
+      padding: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .event-field textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+    .event-field input:focus,
+    .event-field select:focus,
+    .event-field textarea:focus {
+      border-color: rgba(201,168,76,0.62);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .event-registration-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .event-submit {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .event-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(201,168,76,0.34);
+    }
+    .event-form-status {
+      color: rgba(245,237,216,0.58);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 1.4em;
+    }
+    .event-form-status.error { color: #ff8d8d; }
+    .event-form-status.success { color: #9de2b2; }
 
     /* ── JOIN US ── */
     #join {
@@ -1135,6 +1254,7 @@
         left: -34px;
         width: 14px;
       }
+      .event-registration-grid { grid-template-columns: 1fr; }
       #achievements { padding: 88px 24px 94px; }
       .achievements-grid {
         grid-template-columns: 1fr;
@@ -1181,6 +1301,11 @@
       }
       .event-card { padding: 14px 14px 12px; }
       .event-title { font-size: clamp(20px, 7vw, 26px); }
+      .event-register-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      .event-registration-panel { padding: 16px; }
       .achievements-title { font-size: clamp(30px, 9vw, 42px); }
       .milestone-card {
         padding: 14px;
@@ -1504,7 +1629,7 @@
       </div>
       <div class="events-actions">
         <div class="events-count"><strong>4</strong> Scheduled Events</div>
-        <a href="#join" class="events-cta">Join and Register</a>
+        <a href="#eventRegistrationPanel" class="events-cta">Join and Register</a>
       </div>
     </div>
 
@@ -1540,6 +1665,9 @@
               $150,000 Prize Pool
             </span>
           </div>
+          <div class="event-card-actions">
+            <button type="button" class="event-register-btn" data-event-title="NEXUS National Case Challenge 2026">Register for This Event</button>
+          </div>
         </div>
       </article>
 
@@ -1573,6 +1701,9 @@
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M3 7h18v10H3z" stroke="currentColor" stroke-width="1.8"/><path d="M8 12h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
               20+ Exhibitors
             </span>
+          </div>
+          <div class="event-card-actions">
+            <button type="button" class="event-register-btn" data-event-title="InnovateTech Fest 2026">Register for This Event</button>
           </div>
         </div>
       </article>
@@ -1608,6 +1739,9 @@
               6 Hours
             </span>
           </div>
+          <div class="event-card-actions">
+            <button type="button" class="event-register-btn" data-event-title="TDExKUET Ideas &amp; Leadership Session">Register for This Event</button>
+          </div>
         </div>
       </article>
 
@@ -1642,8 +1776,66 @@
               15+ Speakers
             </span>
           </div>
+          <div class="event-card-actions">
+            <button type="button" class="event-register-btn" data-event-title="KBEC Entrepreneurship Summit 2026">Register for This Event</button>
+          </div>
         </div>
       </article>
+    </div>
+
+    <div class="event-registration-panel" id="eventRegistrationPanel" hidden>
+      <h3>Upcoming Event Registration</h3>
+      <p>Select your event and submit your information to reserve your seat.</p>
+
+      <form id="eventRegistrationForm" class="event-registration-form" novalidate>
+        <div class="event-registration-grid">
+          <div class="event-field">
+            <label for="eventSelect">Event</label>
+            <select id="eventSelect" name="event" required>
+              <option value="">Select your event</option>
+              <option value="NEXUS National Case Challenge 2026">NEXUS National Case Challenge 2026</option>
+              <option value="InnovateTech Fest 2026">InnovateTech Fest 2026</option>
+              <option value="TDExKUET Ideas &amp; Leadership Session">TDExKUET Ideas &amp; Leadership Session</option>
+              <option value="KBEC Entrepreneurship Summit 2026">KBEC Entrepreneurship Summit 2026</option>
+            </select>
+          </div>
+
+          <div class="event-field">
+            <label for="eventRegName">Full Name</label>
+            <input type="text" id="eventRegName" name="name" required />
+          </div>
+
+          <div class="event-field">
+            <label for="eventRegEmail">Email</label>
+            <input type="email" id="eventRegEmail" name="email" required />
+          </div>
+
+          <div class="event-field">
+            <label for="eventRegPhone">Phone Number</label>
+            <input type="tel" id="eventRegPhone" name="phone" required />
+          </div>
+
+          <div class="event-field">
+            <label for="eventRegDept">Department</label>
+            <input type="text" id="eventRegDept" name="department" list="departmentSuggestions" required />
+          </div>
+
+          <div class="event-field">
+            <label for="eventRegBatch">Batch</label>
+            <input type="text" id="eventRegBatch" name="batch" required />
+          </div>
+        </div>
+
+        <div class="event-field">
+          <label for="eventRegNote">Message (Optional)</label>
+          <textarea id="eventRegNote" name="note" placeholder="Anything you'd like the organizers to know"></textarea>
+        </div>
+
+        <div class="event-registration-actions">
+          <button type="submit" class="event-submit">Submit Event Registration</button>
+          <p class="event-form-status" id="eventFormStatus" aria-live="polite"></p>
+        </div>
+      </form>
     </div>
   </div>
 </section>
@@ -1845,6 +2037,51 @@
     formStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration has been submitted.`;
     formStatus.className = 'form-status success';
     registrationForm.reset();
+  });
+
+  // ── UPCOMING EVENTS REGISTRATION ──
+  const eventRegisterButtons = document.querySelectorAll('.event-register-btn');
+  const eventRegistrationPanel = document.getElementById('eventRegistrationPanel');
+  const eventRegistrationForm = document.getElementById('eventRegistrationForm');
+  const eventFormStatus = document.getElementById('eventFormStatus');
+  const eventSelect = document.getElementById('eventSelect');
+
+  function openEventRegistration(eventName = '') {
+    eventRegistrationPanel.removeAttribute('hidden');
+    if (eventName) {
+      eventSelect.value = eventName;
+    }
+    eventFormStatus.textContent = '';
+    eventFormStatus.className = 'event-form-status';
+    eventRegistrationPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => {
+      eventRegistrationForm.querySelector('input, select, textarea').focus();
+    }, 120);
+  }
+
+  eventRegisterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      openEventRegistration(btn.dataset.eventTitle || '');
+    });
+  });
+
+  eventRegistrationForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    if (!eventRegistrationForm.checkValidity()) {
+      eventRegistrationForm.reportValidity();
+      eventFormStatus.textContent = 'Please complete all required fields before submitting.';
+      eventFormStatus.className = 'event-form-status error';
+      return;
+    }
+
+    const data = new FormData(eventRegistrationForm);
+    const name = (data.get('name') || '').toString().trim();
+    const selectedEvent = (data.get('event') || '').toString().trim();
+
+    eventFormStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration for ${selectedEvent} has been submitted.`;
+    eventFormStatus.className = 'event-form-status success';
+    eventRegistrationForm.reset();
   });
 </script>
 </body>
