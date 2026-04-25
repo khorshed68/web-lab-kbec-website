@@ -751,6 +751,216 @@
       color: var(--gold);
       opacity: 0.85;
     }
+
+    /* ── JOIN US ── */
+    #join {
+      position: relative;
+      padding: 108px 48px 118px;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(201,168,76,0.09), transparent 42%),
+        radial-gradient(circle at 82% 78%, rgba(201,168,76,0.07), transparent 38%),
+        var(--dark-2);
+      border-top: 1px solid rgba(201,168,76,0.12);
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+    .join-wrap {
+      max-width: 1020px;
+      margin: 0 auto;
+    }
+    .join-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .join-eyebrow::before {
+      content: '';
+      width: 36px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .join-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(34px, 4.4vw, 56px);
+      line-height: 1.08;
+      max-width: 680px;
+      margin-bottom: 14px;
+    }
+    .join-copy {
+      max-width: 640px;
+      color: rgba(245,237,216,0.58);
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+    .join-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .join-card {
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 14px;
+      padding: 22px 20px 18px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.02), rgba(255,255,255,0.005));
+      transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .join-card:hover {
+      border-color: rgba(201,168,76,0.42);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.36);
+    }
+    .join-card h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(20px, 2vw, 28px);
+      margin-bottom: 8px;
+      color: rgba(245,237,216,0.95);
+    }
+    .join-card p {
+      color: rgba(245,237,216,0.48);
+      font-size: 13px;
+      line-height: 1.72;
+    }
+    .join-card-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(201,168,76,0.28);
+      background: rgba(201,168,76,0.1);
+      color: var(--gold-light);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .register-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(201,168,76,0.45);
+      background: rgba(201,168,76,0.12);
+      color: var(--gold-light);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+    .register-trigger:hover {
+      background: var(--gold);
+      color: var(--dark);
+      border-color: var(--gold);
+    }
+    .registration-panel {
+      margin-top: 26px;
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 14px;
+      padding: 22px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+    }
+    .registration-panel[hidden] {
+      display: none;
+    }
+    .registration-head {
+      margin-bottom: 14px;
+    }
+    .registration-head h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 2vw, 30px);
+      margin-bottom: 8px;
+    }
+    .registration-head p {
+      color: rgba(245,237,216,0.52);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .registration-form {
+      display: grid;
+      gap: 14px;
+    }
+    .registration-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .registration-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .registration-field label {
+      color: rgba(245,237,216,0.72);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    .registration-field input,
+    .registration-field select,
+    .registration-field textarea {
+      width: 100%;
+      border: 1px solid rgba(201,168,76,0.24);
+      border-radius: 8px;
+      background: rgba(10,8,4,0.56);
+      color: var(--text);
+      padding: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .registration-field textarea {
+      min-height: 106px;
+      resize: vertical;
+    }
+    .registration-field input:focus,
+    .registration-field select:focus,
+    .registration-field textarea:focus {
+      border-color: rgba(201,168,76,0.62);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+    }
+    .registration-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .register-submit {
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--gold);
+      background: var(--gold);
+      color: var(--dark);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .register-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(201,168,76,0.34);
+    }
+    .form-status {
+      color: rgba(245,237,216,0.58);
+      font-size: 13px;
+      line-height: 1.6;
+      min-height: 1.4em;
+    }
+    .form-status.error { color: #ff8d8d; }
+    .form-status.success { color: #9de2b2; }
     /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       to { opacity: 1; transform: translateY(0); }
@@ -796,6 +1006,9 @@
         left: -34px;
         width: 14px;
       }
+      #join { padding: 88px 24px 94px; }
+      .join-cards { grid-template-columns: 1fr; }
+      .registration-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
       .btn-primary, .btn-ghost { padding: 14px 28px; width: 100%; text-align: center; justify-content: center; }
@@ -831,6 +1044,11 @@
       }
       .event-card { padding: 14px 14px 12px; }
       .event-title { font-size: clamp(20px, 7vw, 26px); }
+      .register-trigger {
+        width: 100%;
+        justify-content: center;
+      }
+      .registration-panel { padding: 16px; }
     }
   </style>
 </head>
@@ -1013,6 +1231,97 @@
       <img src="club-logo.png" alt="KUET Business and Entrepreneurship Club logo" />
     </div>
 
+  </div>
+</section>
+
+<!-- JOIN US -->
+<section id="join">
+  <div class="join-wrap">
+    <p class="join-eyebrow">Why Join Us</p>
+    <h2 class="join-title">Where Engineers Think Like Entrepreneurs</h2>
+    <p class="join-copy">
+      At KBEC KUET, we bridge the gap between technical expertise and business strategy. Whether you are an aspiring startup founder or a corporate leader in the making, this is your launchpad.
+    </p>
+
+    <div class="join-cards">
+      <article class="join-card">
+        <div class="join-card-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 7v-2a4 4 0 0 0-4-4h-1m9 6v-2a4 4 0 0 0-3-3.87M4 21v-2a4 4 0 0 1 4-4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Mentorship Program</h3>
+        <p>1-on-1 guidance from industry veterans, startup founders, and successful alumni.</p>
+      </article>
+
+      <article class="join-card">
+        <div class="join-card-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>National Competitions</h3>
+        <p>Represent KUET in top-tier business case competitions and innovation contests nationwide.</p>
+      </article>
+    </div>
+
+    <button type="button" class="register-trigger" id="openRegistrationBtn" aria-controls="registrationPanel" aria-expanded="false">
+      Register Now
+    </button>
+
+    <div class="registration-panel" id="registrationPanel" hidden>
+      <div class="registration-head">
+        <h3>KBEC Registration Form</h3>
+        <p>Fill out the form below. You will get instant confirmation on this page after submitting.</p>
+      </div>
+
+      <form id="registrationForm" class="registration-form" novalidate>
+        <div class="registration-grid">
+          <div class="registration-field">
+            <label for="regName">Full Name</label>
+            <input type="text" id="regName" name="name" required />
+          </div>
+          <div class="registration-field">
+            <label for="regEmail">Email</label>
+            <input type="email" id="regEmail" name="email" required />
+          </div>
+          <div class="registration-field">
+            <label for="regId">Student ID</label>
+            <input type="text" id="regId" name="studentId" required />
+          </div>
+          <div class="registration-field">
+            <label for="regDepartment">Department</label>
+            <input type="text" id="regDepartment" name="department" required />
+          </div>
+          <div class="registration-field">
+            <label for="regBatch">Batch</label>
+            <input type="text" id="regBatch" name="batch" required />
+          </div>
+          <div class="registration-field">
+            <label for="regInterest">Interest Area</label>
+            <select id="regInterest" name="interest" required>
+              <option value="">Select one</option>
+              <option value="case-competition">Case Competition</option>
+              <option value="startup">Startup & Innovation</option>
+              <option value="marketing">Marketing</option>
+              <option value="operations">Operations</option>
+              <option value="finance">Finance</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="registration-field">
+          <label for="regMessage">Why do you want to join?</label>
+          <textarea id="regMessage" name="message" placeholder="Tell us about your goals (optional)"></textarea>
+        </div>
+
+        <div class="registration-actions">
+          <button type="submit" class="register-submit">Submit Registration</button>
+          <p class="form-status" id="formStatus" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -1247,6 +1556,48 @@
   }, { threshold: 0.5 });
 
   document.querySelectorAll('[data-target]').forEach(el => observer.observe(el));
+
+  // ── JOIN REGISTRATION ──
+  const openRegistrationBtn = document.getElementById('openRegistrationBtn');
+  const registrationPanel = document.getElementById('registrationPanel');
+  const registrationForm = document.getElementById('registrationForm');
+  const formStatus = document.getElementById('formStatus');
+
+  // Expand or collapse the registration panel from the Join Us CTA button.
+  openRegistrationBtn.addEventListener('click', () => {
+    const isHidden = registrationPanel.hasAttribute('hidden');
+    if (isHidden) {
+      registrationPanel.removeAttribute('hidden');
+      openRegistrationBtn.setAttribute('aria-expanded', 'true');
+      openRegistrationBtn.textContent = 'Close Registration';
+      formStatus.textContent = '';
+      formStatus.className = 'form-status';
+      registrationForm.querySelector('input, select, textarea').focus();
+    } else {
+      registrationPanel.setAttribute('hidden', '');
+      openRegistrationBtn.setAttribute('aria-expanded', 'false');
+      openRegistrationBtn.textContent = 'Register Now';
+    }
+  });
+
+  // Validate required fields and show immediate confirmation feedback after submit.
+  registrationForm.addEventListener('submit', e => {
+    e.preventDefault();
+
+    if (!registrationForm.checkValidity()) {
+      registrationForm.reportValidity();
+      formStatus.textContent = 'Please complete all required fields before submitting.';
+      formStatus.className = 'form-status error';
+      return;
+    }
+
+    const data = new FormData(registrationForm);
+    const name = (data.get('name') || '').toString().trim();
+
+    formStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration has been submitted.`;
+    formStatus.className = 'form-status success';
+    registrationForm.reset();
+  });
 </script>
 </body>
 </html>
