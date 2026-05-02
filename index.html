@@ -1081,6 +1081,125 @@
     .form-status.error { color: #ff8d8d; }
     .form-status.success { color: #9de2b2; }
 
+    /* ── EVENTS GALLERY ── */
+    #gallery {
+      position: relative;
+      padding: 110px 48px 118px;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(201,168,76,0.07), transparent 35%),
+        radial-gradient(circle at 82% 70%, rgba(201,168,76,0.05), transparent 40%),
+        var(--dark);
+      border-top: 1px solid rgba(201,168,76,0.1);
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+    }
+    .gallery-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .gallery-head {
+      margin-bottom: 60px;
+      text-align: center;
+    }
+    .gallery-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .gallery-eyebrow::before {
+      content: '';
+      width: 36px;
+      height: 1px;
+      background: var(--gold);
+    }
+    .gallery-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(40px, 5.2vw, 64px);
+      line-height: 1.08;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .gallery-subtitle {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      grid-auto-rows: 280px;
+    }
+    .gallery-item {
+      position: relative;
+      border: 1px solid rgba(201,168,76,0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .gallery-item:hover {
+      border-color: rgba(201,168,76,0.5);
+      box-shadow: 0 12px 32px rgba(201,168,76,0.15);
+      transform: translateY(-4px);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+    .gallery-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(201,168,76,0.08);
+      color: rgba(201,168,76,0.35);
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+    }
+    .gallery-placeholder svg {
+      width: 40px;
+      height: 40px;
+      opacity: 0.4;
+    }
+    .gallery-item.large {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    @media (max-width: 900px) {
+      #gallery { padding: 88px 24px 94px; }
+      .gallery-grid { gap: 18px; }
+      .gallery-item, .gallery-item.large {
+        grid-column: span 1;
+        grid-row: span 1;
+      }
+      .gallery-title { font-size: clamp(32px, 7vw, 48px); }
+    }
+    @media (max-width: 480px) {
+      #gallery { padding: 68px 16px 78px; }
+      .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+      .gallery-title { font-size: 28px; margin-bottom: 12px; }
+      .gallery-subtitle { font-size: 13px; }
+    }
+
     /* ── AWARDS & MILESTONES ── */
     #achievements {
       position: relative;
@@ -1350,6 +1469,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#events">Events</a></li>
     <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#gallery">Gallery</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#join" class="nav-cta">Join Us</a></li>
   </ul>
@@ -1364,6 +1484,7 @@
   <a href="#about">About</a>
   <a href="#events">Events</a>
   <a href="#achievements">Achievements</a>
+  <a href="#gallery">Gallery</a>
   <a href="#sponsors">Sponsors</a>
   <a href="#join">Join Us</a>
 </div>
@@ -1836,6 +1957,89 @@
           <p class="event-form-status" id="eventFormStatus" aria-live="polite"></p>
         </div>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS GALLERY -->
+<section id="gallery">
+  <div class="gallery-wrap">
+    <div class="gallery-head">
+      <p class="gallery-eyebrow">Photo Memories</p>
+      <h2 class="gallery-title">Events Gallery</h2>
+      <p class="gallery-subtitle">
+        Relive the moments from our past events, competitions, and memorable gatherings. Check back often for new photos from upcoming events.
+      </p>
+    </div>
+
+    <div class="gallery-grid">
+      <!-- Large featured image -->
+      <article class="gallery-item large">
+        <div class="gallery-placeholder">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
+
+      <!-- Regular gallery items -->
+      <article class="gallery-item">
+        <div class="gallery-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <div class="gallery-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <div class="gallery-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <div class="gallery-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
+
+      <article class="gallery-item">
+        <div class="gallery-placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="9.5" cy="9.5" r="1.5" fill="currentColor"/>
+            <path d="M3 12l5-5 4 4 8-8v13" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+          <span>EVENT PHOTO</span>
+        </div>
+      </article>
     </div>
   </div>
 </section>
