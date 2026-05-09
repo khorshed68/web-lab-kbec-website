@@ -287,7 +287,7 @@
 
     .hero-title {
       font-family: 'Cinzel', serif;
-      font-size: clamp(44px, 7vw, 92px);
+      font-size: clamp(50px, 7.5vw, 102px);
       font-weight: 900;
       line-height: 1.0;
       letter-spacing: -0.01em;
@@ -385,17 +385,21 @@
 
     /* Scroll indicator */
     .scroll-hint {
-      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
       z-index: 2; display: flex; flex-direction: column;
-      align-items: center; gap: 8px;
+      align-items: center; gap: 10px;
       opacity: 0; animation: fadeIn 1s ease 1.6s forwards;
     }
     .scroll-hint span {
-      font-size: 9px; letter-spacing: 0.3em;
-      text-transform: uppercase; color: var(--text-muted);
+      font-size: 12px;
+      letter-spacing: 0.28em;
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
     }
     .scroll-line {
-      width: 1px; height: 48px;
+      width: 2px; height: 56px;
       background: linear-gradient(to bottom, var(--accent), transparent);
       animation: scrollLine 2s ease-in-out infinite;
     }
@@ -621,6 +625,9 @@
       border-radius: 16px;
       border: 1px solid rgba(0, 102, 204, 0.2);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       background:
         radial-gradient(circle at 28% 22%, rgba(0, 102, 204, 0.15), transparent 48%),
         linear-gradient(165deg, rgba(0, 102, 204, 0.02), rgba(0, 102, 204, 0.005));
@@ -628,9 +635,44 @@
     }
     .about-panel img {
       width: 100%;
-      height: 100%;
+      max-height: 60%;
       object-fit: cover;
       display: block;
+    }
+    .about-panel-copy {
+      margin-top: auto;
+      width: 100%;
+      padding: 20px 14px 26px;
+      text-align: center;
+      color: var(--text);
+      background: linear-gradient(to bottom, rgba(248, 249, 250, 0.05), rgba(248, 249, 250, 0.34));
+    }
+    .about-panel-copy .panel-kicker {
+      display: block;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .about-panel-copy h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(20px, 2vw, 30px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      margin-bottom: 6px;
+      max-width: 100%;
+      word-break: normal;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+    }
+    .about-panel-copy p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: 220px;
+      margin: 0 auto;
     }
 
     /* ── UPCOMING EVENTS ── */
@@ -1463,7 +1505,7 @@
       .mobile-menu { display: flex; padding: 24px; }
       #hero { padding: 0 24px 120px; }
       .hero-stats { display: none; }
-      .hero-title { font-size: clamp(38px, 10vw, 60px); }
+      .hero-title { font-size: clamp(42px, 10vw, 68px); }
       #about { padding: 86px 24px 90px; }
       .about-wrap {
         grid-template-columns: 1fr;
@@ -1772,6 +1814,11 @@
 
     <div class="about-panel">
       <img src="club-logo.png" alt="KUET Business and Entrepreneurship Club logo" />
+      <div class="about-panel-copy">
+        <span class="panel-kicker">KUET</span>
+        <h3>Business &amp;<br />Entrepreneurship<br />Club</h3>
+        <p>Building future leaders through ideas, innovation, and action.</p>
+      </div>
     </div>
 
   </div>
