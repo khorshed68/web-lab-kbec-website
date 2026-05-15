@@ -2575,5 +2575,173 @@
   });
 
 </script>
+<!-- Suggestion / Complaint modal + floating button -->
+<style id="feedback-styles">
+  .feedback-fab { position: fixed; right: 24px; bottom: 36px; z-index: 1400; background: var(--accent); color: #fff; border: none; border-radius: 20px; width:80px; height:80px; display:flex; align-items:center; justify-content:center; font-size:28px; box-shadow:0 18px 40px rgba(2,6,23,0.22); cursor:pointer; transition: transform 0.18s ease, box-shadow 0.18s ease; }
+  .feedback-fab:hover{ transform: translateY(-4px) scale(1.03); box-shadow:0 28px 60px rgba(2,6,23,0.28); }
+  .feedback-fab:focus { outline: 4px solid rgba(0,123,255,0.18); }
+  .feedback-modal-backdrop { position: fixed; inset:0; background: rgba(10,12,16,0.48); display:flex; align-items:center; justify-content:center; z-index:1250; }
+  .feedback-modal { width: min(980px, 94%); max-height: 92vh; overflow:auto; background:#fff; border-radius:12px; padding:26px; box-shadow:0 30px 80px rgba(15,23,42,0.18); border: 1px solid rgba(2,6,23,0.04); position:relative; }
+  .feedback-modal::before{ content:''; position:absolute; left:0; right:0; top:0; height:6px; border-top-left-radius:12px; border-top-right-radius:12px; background: linear-gradient(90deg, var(--accent), #0b6fb8); }
+  .feedback-modal h3 { margin:8px 0 8px 0; font-size:30px; letter-spacing:0.02em; color: #0b2540 }
+  .feedback-modal h3 .icon{ display:inline-flex; width:38px; height:38px; align-items:center; justify-content:center; background:linear-gradient(135deg,#0b6fb8,#06a6c5); color:#fff; border-radius:8px; font-size:18px; box-shadow:0 8px 24px rgba(11,111,184,0.14) }
+  .feedback-row { display:grid; grid-template-columns: repeat(2, 1fr); gap:16px; align-items:start; }
+  .feedback-field { margin:8px 0; display:flex; flex-direction:column; }
+  .feedback-field label{ font-size:15px; color:#374151; margin-bottom:8px; font-weight:700 }
+  .feedback-field label .req { color: #d14343; margin-left:6px; }
+  .feedback-field input[type="text"], .feedback-field input[type="email"], .feedback-field select, .feedback-field textarea, .feedback-field input[type="file"] { border:1px solid #e6eef6; padding:14px 16px; border-radius:8px; font-size:15px; background:#fbfdff; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); }
+  .feedback-field input:focus, .feedback-field textarea:focus, .feedback-field select:focus { outline: none; border-color: rgba(11,111,184,0.95); box-shadow: 0 12px 36px rgba(11,111,184,0.12); }
+  .feedback-field input[type="text"]::placeholder, .feedback-field input[type="email"]::placeholder, .feedback-field textarea::placeholder { color:#9aa6b2 }
+  .feedback-field textarea { min-height:180px; resize:vertical; font-size:15px }
+  .file-input-wrapper{ display:flex; gap:12px; align-items:center }
+  .file-input-wrapper input[type=file]{ display:none }
+  .file-label{ background:#fff; border:1px solid #d1dbe6; padding:8px 12px; border-radius:8px; cursor:pointer; color:#0b3b66; font-weight:600 }
+  .file-chosen{ color:#6b7280; font-size:14px }
+  .custom-checkbox{ display:flex; gap:10px; align-items:center; cursor:pointer }
+  .custom-checkbox input{ width:18px; height:18px; accent-color:#0b6fb8 }
+  .feedback-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:18px; }
+  .feedback-error { color:#b32; font-size:13px; margin-top:6px; }
+  .feedback-note { font-size:13px; color: #6b7280; margin-top:8px; }
+  .feedback-modal .close-btn{ position:absolute; right:18px; top:14px; width:34px; height:34px; border-radius:50%; border:none; background:transparent; font-size:18px }
+  .feedback-actions button{ padding:10px 14px; border-radius:8px; border:1px solid transparent; }
+  #cancelFeedbackBtn{ background:#fff; border:1px solid #d1dbe6; color:#1f2937 }
+  #submitFeedbackBtn{ background: linear-gradient(90deg, #0b6fb8, #06a6c5); color:#fff; border:none; font-weight:700; box-shadow:0 14px 36px rgba(11,111,184,0.16); padding:14px 20px; font-size:15px }
+  #submitFeedbackBtn:disabled{ opacity:0.6 }
+  .feedback-note.privacy{ font-size:12px; color:#6b7280; margin-top:10px }
+  @media (max-width:600px){ .feedback-row{flex-direction:column} .feedback-modal{padding:14px} }
+</style>
+
+<button class="feedback-fab" id="openFeedbackBtn" aria-label="Open feedback form">✉</button>
+
+<div id="feedbackModal" hidden aria-hidden="true">
+  <div class="feedback-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="feedbackTitle">
+    <div class="feedback-modal" id="feedbackDialog">
+      <button id="closeFeedbackBtn" class="close-btn" aria-label="Close feedback form">×</button>
+      <h3 id="feedbackTitle"><span class="icon" aria-hidden="true">✉</span>Suggestion / Complaint</h3>
+      <p class="feedback-note">We welcome your feedback. Submissions will be visible to club admins only.</p>
+      <form id="feedbackForm">
+        <div class="feedback-row">
+          <div class="feedback-field" style="flex:1">
+            <label>Type <span style="color:#b32">*</span>
+              <select name="type" required aria-required="true">
+                <option value="">Select type</option>
+                <option value="Suggestion">Suggestion</option>
+                <option value="Complaint">Complaint</option>
+              </select>
+            </label>
+            <span class="feedback-error" data-for="type"></span>
+          </div>
+          <div class="feedback-field" style="flex:1">
+            <label>Name
+              <input name="name" type="text" placeholder="Your name (optional)">
+            </label>
+            <span class="feedback-error" data-for="name"></span>
+          </div>
+        </div>
+
+        <div class="feedback-row">
+          <div class="feedback-field" style="flex:1">
+            <label>Email
+              <input name="email" type="email" placeholder="you@example.com">
+            </label>
+            <span class="feedback-error" data-for="email"></span>
+          </div>
+          <div class="feedback-field" style="flex:1">
+            <label>Subject <span style="color:#b32">*</span>
+              <input name="subject" type="text" maxlength="120" required aria-required="true" placeholder="Short summary">
+            </label>
+            <span class="feedback-error" data-for="subject"></span>
+          </div>
+        </div>
+
+        <div class="feedback-field">
+          <label>Message <span style="color:#b32">*</span>
+            <textarea name="message" minlength="10" required aria-required="true" placeholder="Tell us more..."></textarea>
+          </label>
+          <span class="feedback-error" data-for="message"></span>
+        </div>
+
+        <div class="feedback-row">
+          <div class="feedback-field" style="flex:1">
+            <label>Attachment (jpg/png/pdf, max 3MB)</label>
+            <div class="file-input-wrapper">
+              <input id="attachment" name="attachment" type="file" accept="image/jpeg,image/png,application/pdf">
+              <label for="attachment" class="file-label">Choose file</label>
+              <span class="file-chosen">No file chosen</span>
+            </div>
+            <span class="feedback-error" data-for="attachment"></span>
+          </div>
+          <div class="feedback-field" style="flex:1">
+            <label class="custom-checkbox"><input type="checkbox" name="consent" required><span>I consent to my submission being viewed by club admins.</span> <span style="color:#b32">*</span></label>
+            <span class="feedback-error" data-for="consent"></span>
+          </div>
+        </div>
+
+        <div class="feedback-actions">
+          <div id="feedbackStatus" role="status" aria-live="polite" style="align-self:center"></div>
+          <button type="button" id="cancelFeedbackBtn">Cancel</button>
+          <button type="submit" id="submitFeedbackBtn" style="background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:6px;">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22 2L11 13" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 2l-7 20  -2-8-8-2 20-10z" stroke="#fff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></svg>
+            <span>Send</span>
+          </button>
+        </div>
+      </form>
+      <p class="feedback-note" style="margin-top:8px">Privacy: Submissions are visible only to club administrators and will be used to improve club activities.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const openBtn = document.getElementById('openFeedbackBtn');
+    const modal = document.getElementById('feedbackModal');
+    const closeBtn = document.getElementById('closeFeedbackBtn');
+    const cancelBtn = document.getElementById('cancelFeedbackBtn');
+    const form = document.getElementById('feedbackForm');
+    const status = document.getElementById('feedbackStatus');
+    const submitBtn = document.getElementById('submitFeedbackBtn');
+    const lastKey = 'kbec_last_feedback_time';
+
+    function openModal(){ modal.removeAttribute('hidden'); modal.querySelector('.feedback-modal-backdrop').focus?.(); modal.setAttribute('aria-hidden','false'); setTimeout(()=> form.querySelector('[name=type]').focus(),120); }
+    function closeModal(){ modal.setAttribute('hidden',''); modal.setAttribute('aria-hidden','true'); status.textContent=''; clearErrors(); form.reset(); }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    modal.addEventListener('click', (e)=>{ if(e.target.classList.contains('feedback-modal-backdrop')) closeModal(); });
+
+    function clearErrors(){ modal.querySelectorAll('.feedback-error').forEach(el=>el.textContent=''); }
+
+    function showError(field, msg){ const el = modal.querySelector('.feedback-error[data-for="'+field+'"]'); if(el) el.textContent = msg; }
+
+    function validateForm(){ clearErrors(); let ok=true; const data = new FormData(form); const type = data.get('type'); const subject = (data.get('subject')||'').toString().trim(); const message = (data.get('message')||'').toString().trim(); const email = (data.get('email')||'').toString().trim(); const consent = data.get('consent'); if(!type){ showError('type','Please choose Suggestion or Complaint'); ok=false; } if(!subject || subject.length>120){ showError('subject','Subject is required (max 120 chars)'); ok=false; } if(!message || message.length<10){ showError('message','Message must be at least 10 characters'); ok=false; } if(email){ const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/; if(!re.test(email)){ showError('email','Please enter a valid email'); ok=false; } } if(!consent){ showError('consent','Consent is required'); ok=false; }
+      const file = form.querySelector('input[name=attachment]').files[0]; if(file){ const allowed=['image/jpeg','image/png','application/pdf']; if(!allowed.includes(file.type)){ showError('attachment','Allowed types: jpg, png, pdf'); ok=false; } if(file.size>3*1024*1024){ showError('attachment','File must be 3MB or smaller'); ok=false; } }
+      // client rate-limit
+      const last = localStorage.getItem(lastKey); if(last && (Date.now()-Number(last) < 60*1000)){ showError('type','Please wait a bit before sending another submission'); ok=false; }
+      return ok;
+    }
+
+    form.addEventListener('submit', async e=>{
+      e.preventDefault(); if(!validateForm()) return; submitBtn.disabled=true; submitBtn.textContent='Sending...'; status.textContent='Sending…';
+      try{
+        const payload = new FormData(form);
+        const resp = await fetch('/api/feedback', { method:'POST', body: payload });
+        if(!resp.ok){ const err = await resp.json().catch(()=>({message:'Server error'})); throw new Error(err.message||'Server error'); }
+        const result = await resp.json(); status.textContent = 'Thanks — your feedback has been submitted.'; status.style.color = 'green'; localStorage.setItem(lastKey, String(Date.now())); form.reset(); setTimeout(()=>{ closeModal(); }, 1400);
+      }catch(err){ status.textContent = err.message||'Submission failed'; status.style.color = '#b32'; }
+      finally{ submitBtn.disabled=false; submitBtn.textContent='Send'; }
+    });
+    // show chosen filename
+    const attachmentEl = document.getElementById('attachment');
+    const fileChosen = document.querySelector('.file-chosen');
+    if(attachmentEl){
+      attachmentEl.addEventListener('change', ()=>{
+        const f = attachmentEl.files[0];
+        fileChosen.textContent = f ? f.name : 'No file chosen';
+      });
+    }
+  })();
+</script>
 </body>
 </html>
