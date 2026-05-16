@@ -1397,6 +1397,299 @@
       line-height: 1.7;
     }
 
+    /* ── TEAM / COMMITTEE ── */
+    #team {
+      position: relative;
+      padding: 108px 48px 120px;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(0, 102, 204, 0.08), transparent 38%),
+        radial-gradient(circle at 82% 75%, rgba(201, 168, 76, 0.08), transparent 34%),
+        var(--bg-secondary);
+      border-top: 1px solid rgba(0, 102, 204, 0.1);
+    }
+    .team-wrap {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+    .team-head {
+      max-width: 760px;
+      margin: 0 auto 30px;
+      text-align: center;
+    }
+    .team-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      font-size: 10px;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .team-eyebrow::before {
+      content: '';
+      width: 36px;
+      height: 1px;
+      background: var(--accent);
+    }
+    .team-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(34px, 4vw, 56px);
+      line-height: 1.08;
+      margin-bottom: 14px;
+      color: var(--text);
+    }
+    .team-subtitle {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+    .team-filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .team-filter {
+      border: 1px solid rgba(0, 102, 204, 0.18);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: rgba(255, 255, 255, 0.92);
+      color: rgba(26, 26, 26, 0.72);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .team-filter:hover,
+    .team-filter.is-active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+    .member-card {
+      position: relative;
+      border: 1px solid rgba(0, 102, 204, 0.14);
+      border-radius: 18px;
+      padding: 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 251, 255, 0.96));
+      overflow: hidden;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 290px;
+    }
+    .member-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 102, 204, 0.32);
+      box-shadow: 0 16px 32px rgba(0, 102, 204, 0.1);
+    }
+    .member-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--accent-light), rgba(0, 102, 204, 0.12));
+    }
+    .member-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 102, 204, 0.1);
+      color: var(--accent-light);
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .member-meta h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      line-height: 1.14;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .member-meta p {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(0, 102, 204, 0.2);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(0, 102, 204, 0.08);
+      margin-bottom: 12px;
+      width: fit-content;
+    }
+    .member-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid rgba(0, 102, 204, 0.1);
+    }
+    .member-view-btn {
+      border: 1px solid rgba(0, 102, 204, 0.3);
+      border-radius: 999px;
+      background: rgba(0, 102, 204, 0.08);
+      color: var(--accent-light);
+      padding: 9px 12px;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .member-view-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .member-socials {
+      display: flex;
+      gap: 8px;
+    }
+    .member-socials a {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 102, 204, 0.14);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .team-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 16, 0.48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1300;
+      padding: 16px;
+    }
+    .team-modal {
+      width: min(820px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: white;
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(2, 6, 23, 0.04);
+      position: relative;
+    }
+    .team-modal::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 6px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      background: linear-gradient(90deg, var(--accent), #0b6fb8);
+    }
+    .team-modal-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .team-modal-avatar {
+      width: 220px;
+      height: 220px;
+      border-radius: 22px;
+      background: radial-gradient(circle at 30% 20%, rgba(0, 102, 204, 0.16), transparent 48%), rgba(0, 102, 204, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 56px;
+      color: var(--accent-light);
+      border: 1px solid rgba(0, 102, 204, 0.14);
+    }
+    .team-modal h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(28px, 3vw, 42px);
+      margin-bottom: 8px;
+      color: #0b2540;
+    }
+    .team-modal .modal-role {
+      display: inline-flex;
+      margin-bottom: 14px;
+    }
+    .team-modal p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 14px;
+    }
+    .team-modal-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .team-modal-links a {
+      text-decoration: none;
+      border: 1px solid rgba(0, 102, 204, 0.24);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      background: rgba(0, 102, 204, 0.06);
+    }
+    .team-modal-links a:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .team-modal .close-btn {
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
     /* ── RESOURCE HUB ── */
     #resources {
       position: relative;
@@ -2041,6 +2334,10 @@
       .legacy-stats {
         padding-top: 4px;
       }
+      #team { padding: 88px 24px 94px; }
+      .team-grid { grid-template-columns: 1fr; }
+      .team-modal-grid { grid-template-columns: 1fr; }
+      .team-modal-avatar { width: 160px; height: 160px; font-size: 40px; }
       #join { padding: 88px 24px 94px; }
       .join-cards { grid-template-columns: 1fr; }
       .registration-grid { grid-template-columns: 1fr; }
@@ -2106,6 +2403,9 @@
       .opportunity-card h3 { font-size: 19px; }
       .resource-card { padding: 18px; }
       .resource-card h3 { font-size: 21px; }
+      .member-actions { flex-direction: column; align-items: stretch; }
+      .member-socials { justify-content: center; }
+      .member-view-btn { width: 100%; }
     }
     /* Footer styles */
     .site-footer {
@@ -2164,6 +2464,7 @@
     <li><a href="#about">About</a></li>
     <li><a href="#events">Events</a></li>
     <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#team">Team</a></li>
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#resources">Resources</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
@@ -2180,6 +2481,7 @@
   <a href="#about">About</a>
   <a href="#events">Events</a>
   <a href="#achievements">Achievements</a>
+  <a href="#team">Team</a>
   <a href="#gallery">Gallery</a>
   <a href="#resources">Resources</a>
   <a href="#sponsors">Sponsors</a>
@@ -2816,6 +3118,132 @@
   </div>
 </section>
 
+<!-- TEAM / COMMITTEE -->
+<section id="team">
+  <div class="team-wrap">
+    <div class="team-head">
+      <p class="team-eyebrow">Community &amp; Members</p>
+      <h2 class="team-title">Meet the Team</h2>
+      <p class="team-subtitle">
+        Explore our committee members by department, view their roles, and open a short profile card for details.
+      </p>
+
+      <div class="team-filters" id="teamFilters" aria-label="Filter committee by department">
+        <button type="button" class="team-filter is-active" data-filter="all">All</button>
+        <button type="button" class="team-filter" data-filter="cse">CSE</button>
+        <button type="button" class="team-filter" data-filter="eee">EEE</button>
+        <button type="button" class="team-filter" data-filter="bba">BBA</button>
+        <button type="button" class="team-filter" data-filter="me">ME</button>
+        <button type="button" class="team-filter" data-filter="arch">Architecture</button>
+      </div>
+    </div>
+
+    <div class="team-grid" id="teamGrid">
+      <article class="member-card" data-department="cse" data-name="Arafat Rahman" data-role="President" data-department-label="Computer Science and Engineering" data-bio="Leads club strategy, partnerships, and committee coordination with a focus on student-led innovation." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">AR</div>
+        <div class="member-meta">
+          <span class="role-badge">President</span>
+          <h3>Arafat Rahman</h3>
+          <p>Computer Science and Engineering</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" data-department="eee" data-name="Nusrat Jahan" data-role="Vice President" data-department-label="Electrical and Electronic Engineering" data-bio="Supports program planning, operations, and event execution across workshops and competitions." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">NJ</div>
+        <div class="member-meta">
+          <span class="role-badge">Vice President</span>
+          <h3>Nusrat Jahan</h3>
+          <p>Electrical and Electronic Engineering</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" data-department="bba" data-name="Tanzeel Islam" data-role="General Secretary" data-department-label="Business Administration" data-bio="Coordinates committee communication, member onboarding, and internal documentation." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">TI</div>
+        <div class="member-meta">
+          <span class="role-badge">Secretary</span>
+          <h3>Tanzeel Islam</h3>
+          <p>Business Administration</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" data-department="me" data-name="Sadia Akter" data-role="Events Coordinator" data-department-label="Mechanical Engineering" data-bio="Plans event flow, manages logistics, and keeps the club schedule running smoothly." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">SA</div>
+        <div class="member-meta">
+          <span class="role-badge">Coordinator</span>
+          <h3>Sadia Akter</h3>
+          <p>Mechanical Engineering</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" data-department="arch" data-name="Mubashira Khan" data-role="Design Lead" data-department-label="Architecture" data-bio="Creates visual identity, posters, and presentation assets for club campaigns and events." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">MK</div>
+        <div class="member-meta">
+          <span class="role-badge">Design Lead</span>
+          <h3>Mubashira Khan</h3>
+          <p>Architecture</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="member-card" data-department="cse" data-name="Rafiul Hasan" data-role="Tech Lead" data-department-label="Computer Science and Engineering" data-bio="Maintains digital tools, manages online experiences, and supports the club's tech workflow." data-instagram="#" data-facebook="#" data-linkedin="#">
+        <div class="member-avatar">RH</div>
+        <div class="member-meta">
+          <span class="role-badge">Tech Lead</span>
+          <h3>Rafiul Hasan</h3>
+          <p>Computer Science and Engineering</p>
+        </div>
+        <div class="member-actions">
+          <button type="button" class="member-view-btn">Meet the Team</button>
+          <div class="member-socials">
+            <a href="#" aria-label="Instagram">ig</a>
+            <a href="#" aria-label="Facebook">fb</a>
+            <a href="#" aria-label="LinkedIn">in</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
   <!-- SPONSORS -->
 <section id="sponsors">
   <div class="sponsors-wrap">
@@ -3362,6 +3790,113 @@
       });
     });
   }
+
+  // ── TEAM / COMMITTEE FILTERS + MODAL ──
+  const teamFilters = document.getElementById('teamFilters');
+  const memberCards = Array.from(document.querySelectorAll('.member-card'));
+  const teamModal = document.createElement('div');
+  teamModal.id = 'teamModal';
+  teamModal.hidden = true;
+  teamModal.setAttribute('aria-hidden', 'true');
+  teamModal.innerHTML = `
+    <div class="team-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="teamModalTitle">
+      <div class="team-modal" id="teamDialog">
+        <button type="button" class="close-btn" id="closeTeamModalBtn" aria-label="Close team profile">×</button>
+        <div class="team-modal-grid">
+          <div class="team-modal-avatar" id="teamModalAvatar">KB</div>
+          <div>
+            <span class="role-badge modal-role" id="teamModalRole">Role</span>
+            <h3 id="teamModalTitle">Member Name</h3>
+            <p id="teamModalDept">Department</p>
+            <p id="teamModalBio">Bio</p>
+            <div class="team-modal-links">
+              <a href="#" id="teamModalInstagram" target="_blank" rel="noopener">Instagram</a>
+              <a href="#" id="teamModalFacebook" target="_blank" rel="noopener">Facebook</a>
+              <a href="#" id="teamModalLinkedIn" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(teamModal);
+
+  const closeTeamModalBtn = document.getElementById('closeTeamModalBtn');
+  const teamModalAvatar = document.getElementById('teamModalAvatar');
+  const teamModalRole = document.getElementById('teamModalRole');
+  const teamModalTitle = document.getElementById('teamModalTitle');
+  const teamModalDept = document.getElementById('teamModalDept');
+  const teamModalBio = document.getElementById('teamModalBio');
+  const teamModalInstagram = document.getElementById('teamModalInstagram');
+  const teamModalFacebook = document.getElementById('teamModalFacebook');
+  const teamModalLinkedIn = document.getElementById('teamModalLinkedIn');
+
+  function openTeamModal(card) {
+    const name = card.dataset.name || '';
+    const role = card.dataset.role || '';
+    const department = card.dataset.departmentLabel || '';
+    const bio = card.dataset.bio || '';
+    const initials = (name.split(' ').filter(Boolean).slice(0, 2).map(part => part[0]).join('') || 'KB').toUpperCase();
+
+    teamModalAvatar.textContent = initials;
+    teamModalRole.textContent = role;
+    teamModalTitle.textContent = name;
+    teamModalDept.textContent = department;
+    teamModalBio.textContent = bio;
+    teamModalInstagram.href = card.dataset.instagram || '#';
+    teamModalFacebook.href = card.dataset.facebook || '#';
+    teamModalLinkedIn.href = card.dataset.linkedin || '#';
+
+    teamModal.removeAttribute('hidden');
+    teamModal.setAttribute('aria-hidden', 'false');
+    setTimeout(() => closeTeamModalBtn.focus(), 50);
+  }
+
+  function closeTeamModal() {
+    teamModal.setAttribute('hidden', '');
+    teamModal.setAttribute('aria-hidden', 'true');
+  }
+
+  if (teamFilters) {
+    teamFilters.addEventListener('click', event => {
+      const button = event.target.closest('.team-filter');
+      if (!button) {
+        return;
+      }
+
+      const filter = button.dataset.filter;
+      teamFilters.querySelectorAll('.team-filter').forEach(filterButton => {
+        filterButton.classList.toggle('is-active', filterButton === button);
+      });
+
+      memberCards.forEach(card => {
+        card.hidden = !(filter === 'all' || card.dataset.department === filter);
+      });
+    });
+  }
+
+  document.addEventListener('click', event => {
+    const viewButton = event.target.closest('.member-view-btn');
+    if (viewButton) {
+      const card = viewButton.closest('.member-card');
+      if (card) {
+        openTeamModal(card);
+      }
+      return;
+    }
+
+    if (event.target.classList.contains('team-modal-backdrop')) {
+      closeTeamModal();
+    }
+  });
+
+  closeTeamModalBtn.addEventListener('click', closeTeamModal);
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !teamModal.hasAttribute('hidden')) {
+      closeTeamModal();
+    }
+  });
 
 </script>
 <!-- Suggestion / Complaint modal + floating button -->
