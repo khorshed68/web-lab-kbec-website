@@ -2468,6 +2468,7 @@
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#resources">Resources</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
+    <li><a href="#members">Members</a></li>
     <li><a href="#join" class="nav-cta">Join Us</a></li>
   </ul>
 
@@ -2485,6 +2486,7 @@
   <a href="#gallery">Gallery</a>
   <a href="#resources">Resources</a>
   <a href="#sponsors">Sponsors</a>
+  <a href="#members">Members</a>
   <a href="#join">Join Us</a>
 </div>
 
@@ -2737,6 +2739,476 @@
           <p class="form-status" id="formStatus" aria-live="polite"></p>
         </div>
       </form>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBER PORTAL -->
+<style id="member-portal-styles">
+  #members {
+    position: relative;
+    padding: 110px 48px 120px;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(0, 102, 204, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(201, 168, 76, 0.08), transparent 34%),
+      var(--bg-secondary);
+    border-top: 1px solid rgba(0, 102, 204, 0.1);
+    border-bottom: 1px solid rgba(0, 102, 204, 0.08);
+  }
+  .members-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .members-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 28px;
+  }
+  .members-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .members-eyebrow::before {
+    content: '';
+    width: 36px;
+    height: 1px;
+    background: var(--accent);
+  }
+  .members-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(34px, 4.3vw, 56px);
+    line-height: 1.08;
+    max-width: 720px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .members-copy {
+    max-width: 650px;
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .members-badge {
+    border: 1px solid rgba(0, 102, 204, 0.18);
+    background: rgba(0, 102, 204, 0.06);
+    color: var(--accent-light);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .members-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, 0.92fr);
+    gap: 24px;
+    align-items: start;
+  }
+  .members-card {
+    border: 1px solid rgba(0, 102, 204, 0.16);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.84);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 18px 36px rgba(0, 102, 204, 0.06);
+  }
+  .members-auth-card {
+    padding: 22px;
+  }
+  .member-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .member-tab {
+    border: 1px solid rgba(0, 102, 204, 0.16);
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.9);
+    color: rgba(26, 26, 26, 0.7);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .member-tab:hover,
+  .member-tab.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    transform: translateY(-1px);
+  }
+  .member-panel {
+    display: none;
+  }
+  .member-panel.is-active {
+    display: block;
+  }
+  .member-panel h3,
+  .member-dashboard-title {
+    font-family: 'Cinzel', serif;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .member-panel h3 {
+    font-size: clamp(22px, 2vw, 30px);
+    margin-bottom: 8px;
+  }
+  .member-panel p,
+  .member-dashboard-copy {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .member-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .member-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .member-field.member-span-2 {
+    grid-column: 1 / -1;
+  }
+  .member-field label {
+    color: rgba(26, 26, 26, 0.72);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .member-field input,
+  .member-field select,
+  .member-field textarea {
+    width: 100%;
+    border: 1px solid rgba(0, 102, 204, 0.24);
+    border-radius: 10px;
+    background: white;
+    color: var(--text);
+    padding: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .member-field textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  .member-field input:focus,
+  .member-field select:focus,
+  .member-field textarea:focus {
+    border-color: rgba(0, 102, 204, 0.62);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+  .member-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .member-submit,
+  .member-secondary,
+  .member-logout {
+    border-radius: 10px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 12px 18px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+  .member-submit:hover,
+  .member-secondary:hover,
+  .member-logout:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0, 102, 204, 0.24);
+  }
+  .member-secondary {
+    background: rgba(0, 102, 204, 0.08);
+    color: var(--accent-light);
+    border-color: rgba(0, 102, 204, 0.28);
+  }
+  .member-logout {
+    background: white;
+    color: var(--accent);
+    border-color: rgba(0, 102, 204, 0.24);
+  }
+  .member-status {
+    color: rgba(26, 26, 26, 0.58);
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 1.4em;
+  }
+  .member-status.error { color: #d32f2f; }
+  .member-status.success { color: #2e7d32; }
+  .member-help {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 102, 204, 0.12);
+    background: rgba(0, 102, 204, 0.04);
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .member-dashboard-card {
+    padding: 22px;
+  }
+  .member-dashboard-empty,
+  .member-dashboard-view {
+    display: grid;
+    gap: 16px;
+  }
+  .member-dashboard-empty {
+    padding: 10px 2px;
+  }
+  .member-dashboard-empty h3 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(24px, 2.2vw, 32px);
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .member-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .member-summary-card {
+    border: 1px solid rgba(0, 102, 204, 0.12);
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .member-summary-card span {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 10px;
+    color: rgba(26, 26, 26, 0.54);
+    margin-bottom: 6px;
+  }
+  .member-summary-card strong {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .member-profile-form {
+    display: grid;
+    gap: 14px;
+    margin-top: 8px;
+  }
+  .member-profile-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  @media (max-width: 1000px) {
+    #members { padding: 88px 24px; }
+    .members-head,
+    .members-layout { grid-template-columns: 1fr; }
+    .members-head { display: grid; }
+    .members-badge { justify-self: start; }
+  }
+  @media (max-width: 720px) {
+    .member-form-grid,
+    .member-summary-grid { grid-template-columns: 1fr; }
+    .members-auth-card,
+    .member-dashboard-card { padding: 18px; }
+  }
+</style>
+
+<section id="members">
+  <div class="members-wrap">
+    <div class="members-head">
+      <div>
+        <p class="members-eyebrow">Member Portal</p>
+        <h2 class="members-title">Register with your KUET email, verify, then manage your club profile</h2>
+        <p class="members-copy">This portal gives every member one secure account for signup, login, profile updates, and dashboard access.</p>
+      </div>
+      <div class="members-badge">KUET Email Required</div>
+    </div>
+
+    <div class="members-layout">
+      <div class="members-card members-auth-card">
+        <div class="member-tabs" role="tablist" aria-label="Member account options">
+          <button type="button" class="member-tab is-active" data-member-tab="signup" aria-selected="true">Sign Up</button>
+          <button type="button" class="member-tab" data-member-tab="login" aria-selected="false">Login</button>
+        </div>
+
+        <form id="memberSignupForm" class="member-panel is-active" novalidate>
+          <h3>Create Account</h3>
+          <p>Use your KUET email to create a verified member profile.</p>
+
+          <div class="member-form-grid">
+            <div class="member-field">
+              <label for="memberName">Full Name</label>
+              <input id="memberName" name="name" type="text" required>
+            </div>
+            <div class="member-field">
+              <label for="memberStudentId">Student ID</label>
+              <input id="memberStudentId" name="studentId" type="text" required>
+            </div>
+            <div class="member-field">
+              <label for="memberEmail">KUET Email</label>
+              <input id="memberEmail" name="email" type="email" placeholder="name@kuet.ac.bd" required>
+            </div>
+            <div class="member-field">
+              <label for="memberDepartment">Department</label>
+              <input id="memberDepartment" name="department" type="text" list="departmentSuggestions" required>
+            </div>
+            <div class="member-field">
+              <label for="memberBatch">Batch</label>
+              <input id="memberBatch" name="batch" type="text" required>
+            </div>
+            <div class="member-field">
+              <label for="memberPhone">Phone</label>
+              <input id="memberPhone" name="phone" type="tel" placeholder="Optional">
+            </div>
+            <div class="member-field">
+              <label for="memberInterest">Interest Area</label>
+              <select id="memberInterest" name="interest" required>
+                <option value="">Select one</option>
+                <option value="case-competition">Case Competition</option>
+                <option value="startup">Startup & Innovation</option>
+                <option value="marketing">Marketing</option>
+                <option value="operations">Operations</option>
+                <option value="finance">Finance</option>
+              </select>
+            </div>
+            <div class="member-field">
+              <label for="memberPassword">Password</label>
+              <input id="memberPassword" name="password" type="password" minlength="8" required>
+            </div>
+            <div class="member-field member-span-2">
+              <label for="memberConfirmPassword">Confirm Password</label>
+              <input id="memberConfirmPassword" name="confirmPassword" type="password" minlength="8" required>
+            </div>
+            <div class="member-field member-span-2">
+              <label for="memberBio">Profile Note</label>
+              <textarea id="memberBio" name="bio" placeholder="Tell us a bit about your goals"></textarea>
+            </div>
+          </div>
+
+          <div class="member-actions">
+            <button type="submit" class="member-submit">Create Account</button>
+            <p class="member-status" id="memberSignupStatus" aria-live="polite"></p>
+          </div>
+
+          <div class="member-help">After signup, open the verification link sent to your KUET email. On local development, the link is also shown here so you can test the flow immediately.</div>
+        </form>
+
+        <form id="memberLoginForm" class="member-panel" novalidate hidden>
+          <h3>Login</h3>
+          <p>Sign in with the same KUET email and password you used to register.</p>
+
+          <div class="member-form-grid">
+            <div class="member-field member-span-2">
+              <label for="loginEmail">KUET Email</label>
+              <input id="loginEmail" name="email" type="email" required>
+            </div>
+            <div class="member-field member-span-2">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" name="password" type="password" required>
+            </div>
+          </div>
+
+          <div class="member-actions">
+            <button type="submit" class="member-submit">Login</button>
+            <button type="button" class="member-secondary" id="resendVerificationBtn">Resend Verification</button>
+            <p class="member-status" id="memberLoginStatus" aria-live="polite"></p>
+          </div>
+
+          <div class="member-help">If you cannot find the verification email, use the resend button after entering your KUET email.</div>
+        </form>
+      </div>
+
+      <div class="members-card member-dashboard-card">
+        <div id="memberDashboardEmpty" class="member-dashboard-empty">
+          <p class="members-eyebrow">Dashboard</p>
+          <h3>Nothing to show yet</h3>
+          <p class="member-dashboard-copy">Create and verify your account first. Once you log in, you can edit your profile and see your club status here.</p>
+        </div>
+
+        <div id="memberDashboardView" class="member-dashboard-view" hidden>
+          <div>
+            <p class="members-eyebrow">Welcome back</p>
+            <h3 class="member-dashboard-title" id="dashboardName">Member</h3>
+            <p class="member-dashboard-copy" id="dashboardMeta">Your verified member profile is ready.</p>
+          </div>
+
+          <div class="member-summary-grid">
+            <div class="member-summary-card"><span>Member Code</span><strong id="dashboardMemberCode">-</strong></div>
+            <div class="member-summary-card"><span>Verification</span><strong id="dashboardVerification">-</strong></div>
+            <div class="member-summary-card"><span>KUET Email</span><strong id="dashboardEmail">-</strong></div>
+            <div class="member-summary-card"><span>Joined</span><strong id="dashboardJoined">-</strong></div>
+          </div>
+
+          <form id="memberProfileForm" class="member-profile-form" novalidate>
+            <div class="member-form-grid">
+              <div class="member-field">
+                <label for="profileName">Full Name</label>
+                <input id="profileName" name="name" type="text" required>
+              </div>
+              <div class="member-field">
+                <label for="profilePhone">Phone</label>
+                <input id="profilePhone" name="phone" type="tel">
+              </div>
+              <div class="member-field">
+                <label for="profileDepartment">Department</label>
+                <input id="profileDepartment" name="department" type="text" list="departmentSuggestions" required>
+              </div>
+              <div class="member-field">
+                <label for="profileBatch">Batch</label>
+                <input id="profileBatch" name="batch" type="text" required>
+              </div>
+              <div class="member-field member-span-2">
+                <label for="profileInterest">Interest Area</label>
+                <select id="profileInterest" name="interest" required>
+                  <option value="">Select one</option>
+                  <option value="case-competition">Case Competition</option>
+                  <option value="startup">Startup & Innovation</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="operations">Operations</option>
+                  <option value="finance">Finance</option>
+                </select>
+              </div>
+              <div class="member-field member-span-2">
+                <label for="profileBio">Profile Bio</label>
+                <textarea id="profileBio" name="bio"></textarea>
+              </div>
+            </div>
+
+            <div class="member-profile-actions">
+              <button type="submit" class="member-submit">Update Profile</button>
+              <button type="button" class="member-logout" id="memberLogoutBtn">Logout</button>
+              <p class="member-status" id="memberProfileStatus" aria-live="polite"></p>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -4065,6 +4537,310 @@
         fileChosen.textContent = f ? f.name : 'No file chosen';
       });
     }
+  })();
+</script>
+<script>
+  (function () {
+    const membersSection = document.getElementById('members');
+    if (!membersSection) {
+      return;
+    }
+
+    const tabButtons = Array.from(document.querySelectorAll('.member-tab'));
+    const signupForm = document.getElementById('memberSignupForm');
+    const loginForm = document.getElementById('memberLoginForm');
+    const profileForm = document.getElementById('memberProfileForm');
+    const signupStatus = document.getElementById('memberSignupStatus');
+    const loginStatus = document.getElementById('memberLoginStatus');
+    const profileStatus = document.getElementById('memberProfileStatus');
+    const resendVerificationBtn = document.getElementById('resendVerificationBtn');
+    const memberLogoutBtn = document.getElementById('memberLogoutBtn');
+    const dashboardEmpty = document.getElementById('memberDashboardEmpty');
+    const dashboardView = document.getElementById('memberDashboardView');
+    const dashboardName = document.getElementById('dashboardName');
+    const dashboardMeta = document.getElementById('dashboardMeta');
+    const dashboardMemberCode = document.getElementById('dashboardMemberCode');
+    const dashboardVerification = document.getElementById('dashboardVerification');
+    const dashboardEmail = document.getElementById('dashboardEmail');
+    const dashboardJoined = document.getElementById('dashboardJoined');
+    const profileFields = {
+      name: document.getElementById('profileName'),
+      phone: document.getElementById('profilePhone'),
+      department: document.getElementById('profileDepartment'),
+      batch: document.getElementById('profileBatch'),
+      interest: document.getElementById('profileInterest'),
+      bio: document.getElementById('profileBio')
+    };
+    const loginEmailField = document.getElementById('loginEmail');
+
+    function showStatus(target, message, type = '') {
+      if (!target) return;
+      target.className = `member-status${type ? ` ${type}` : ''}`;
+      target.innerHTML = message || '';
+    }
+
+    function switchTab(name) {
+      tabButtons.forEach(button => {
+        const isActive = button.dataset.memberTab === name;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      signupForm.hidden = name !== 'signup';
+      loginForm.hidden = name !== 'login';
+      signupForm.classList.toggle('is-active', name === 'signup');
+      loginForm.classList.toggle('is-active', name === 'login');
+    }
+
+    function formatDate(value) {
+      if (!value) return '-';
+      return new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function renderDashboard(member) {
+      dashboardEmpty.hidden = true;
+      dashboardView.hidden = false;
+
+      dashboardName.textContent = member.name || 'Member';
+      dashboardMeta.textContent = `${member.department || 'Department not set'} • Batch ${member.batch || '-'}`;
+      dashboardMemberCode.textContent = member.memberCode || '-';
+      dashboardVerification.textContent = member.verified ? 'Verified' : 'Pending';
+      dashboardEmail.textContent = member.email || '-';
+      dashboardJoined.textContent = formatDate(member.createdAt);
+
+      profileFields.name.value = member.name || '';
+      profileFields.phone.value = member.phone || '';
+      profileFields.department.value = member.department || '';
+      profileFields.batch.value = member.batch || '';
+      profileFields.interest.value = member.interest || '';
+      profileFields.bio.value = member.bio || '';
+    }
+
+    function clearDashboard(message) {
+      dashboardView.hidden = true;
+      dashboardEmpty.hidden = false;
+      dashboardMeta.textContent = message || 'Your verified member profile is ready.';
+      dashboardVerification.textContent = '-';
+      dashboardMemberCode.textContent = '-';
+      dashboardEmail.textContent = '-';
+      dashboardJoined.textContent = '-';
+      profileForm.reset();
+    }
+
+    async function requestJson(url, options = {}) {
+      const response = await fetch(url, {
+        credentials: 'same-origin',
+        ...options,
+        headers: {
+          ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+          ...(options.headers || {})
+        }
+      });
+
+      let payload = {};
+      try {
+        payload = await response.json();
+      } catch (error) {
+        payload = {};
+      }
+
+      if (!response.ok) {
+        const error = new Error(payload.message || 'Request failed');
+        error.payload = payload;
+        error.status = response.status;
+        throw error;
+      }
+
+      return payload;
+    }
+
+    function scrollToMembers() {
+      membersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function loadMemberSession() {
+      try {
+        const result = await requestJson('/api/member/me');
+        renderDashboard(result.member);
+      } catch (error) {
+        clearDashboard();
+      }
+    }
+
+    async function verifyFromUrl() {
+      const url = new URL(window.location.href);
+      const token = url.searchParams.get('verify');
+      if (!token) return false;
+
+      try {
+        showStatus(signupStatus, 'Verifying your KUET email...', '');
+        const result = await requestJson(`/api/member/verify?token=${encodeURIComponent(token)}`);
+        renderDashboard(result.member);
+        showStatus(signupStatus, result.message || 'Email verified successfully.', 'success');
+        url.searchParams.delete('verify');
+        window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+        scrollToMembers();
+        return true;
+      } catch (error) {
+        showStatus(signupStatus, error.message || 'Verification failed.', 'error');
+        return false;
+      }
+    }
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => switchTab(button.dataset.memberTab));
+    });
+
+    signupForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      showStatus(signupStatus, '', '');
+
+      if (!signupForm.checkValidity()) {
+        signupForm.reportValidity();
+        showStatus(signupStatus, 'Please complete all required fields.', 'error');
+        return;
+      }
+
+      const password = document.getElementById('memberPassword').value;
+      const confirmPassword = document.getElementById('memberConfirmPassword').value;
+      const email = document.getElementById('memberEmail').value.trim().toLowerCase();
+
+      if (password !== confirmPassword) {
+        showStatus(signupStatus, 'Passwords do not match.', 'error');
+        return;
+      }
+
+      if (!email.endsWith('@kuet.ac.bd')) {
+        showStatus(signupStatus, 'Use your KUET email address ending in @kuet.ac.bd.', 'error');
+        return;
+      }
+
+      try {
+        const result = await requestJson('/api/member/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: document.getElementById('memberName').value,
+            studentId: document.getElementById('memberStudentId').value,
+            email,
+            department: document.getElementById('memberDepartment').value,
+            batch: document.getElementById('memberBatch').value,
+            phone: document.getElementById('memberPhone').value,
+            interest: document.getElementById('memberInterest').value,
+            password,
+            bio: document.getElementById('memberBio').value
+          })
+        });
+
+        const verificationLink = result.verificationLink ? ` <a href="${result.verificationLink}">Verify now</a>` : '';
+        showStatus(signupStatus, `${result.message || 'Account created.'}${verificationLink}`, 'success');
+        loginEmailField.value = email;
+        switchTab('login');
+        signupForm.reset();
+        scrollToMembers();
+      } catch (error) {
+        showStatus(signupStatus, error.message || 'Registration failed.', 'error');
+      }
+    });
+
+    loginForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      showStatus(loginStatus, '', '');
+
+      if (!loginForm.checkValidity()) {
+        loginForm.reportValidity();
+        showStatus(loginStatus, 'Enter both email and password.', 'error');
+        return;
+      }
+
+      try {
+        const result = await requestJson('/api/member/login', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: loginEmailField.value,
+            password: document.getElementById('loginPassword').value
+          })
+        });
+
+        renderDashboard(result.member);
+        showStatus(loginStatus, 'Login successful.', 'success');
+        scrollToMembers();
+      } catch (error) {
+        if (error.status === 403 && error.payload && error.payload.verificationRequired) {
+          showStatus(loginStatus, `${error.message}${error.payload.verificationLink ? ` <a href="${error.payload.verificationLink}">Open verification link</a>` : ''}`, 'error');
+        } else {
+          showStatus(loginStatus, error.message || 'Login failed.', 'error');
+        }
+      }
+    });
+
+    resendVerificationBtn.addEventListener('click', async () => {
+      const email = loginEmailField.value.trim();
+      if (!email) {
+        showStatus(loginStatus, 'Enter your KUET email first.', 'error');
+        return;
+      }
+
+      try {
+        const result = await requestJson('/api/member/resend-verification', {
+          method: 'POST',
+          body: JSON.stringify({ email })
+        });
+
+        const verificationLink = result.verificationLink ? ` <a href="${result.verificationLink}">Verify now</a>` : '';
+        showStatus(loginStatus, `${result.message || 'Verification link refreshed.'}${verificationLink}`, 'success');
+      } catch (error) {
+        showStatus(loginStatus, error.message || 'Could not resend verification.', 'error');
+      }
+    });
+
+    profileForm.addEventListener('submit', async event => {
+      event.preventDefault();
+      showStatus(profileStatus, '', '');
+
+      if (!profileForm.checkValidity()) {
+        profileForm.reportValidity();
+        showStatus(profileStatus, 'Complete the required profile fields.', 'error');
+        return;
+      }
+
+      try {
+        const result = await requestJson('/api/member/profile', {
+          method: 'PUT',
+          body: JSON.stringify({
+            name: profileFields.name.value,
+            phone: profileFields.phone.value,
+            department: profileFields.department.value,
+            batch: profileFields.batch.value,
+            interest: profileFields.interest.value,
+            bio: profileFields.bio.value
+          })
+        });
+
+        renderDashboard(result.member);
+        showStatus(profileStatus, result.message || 'Profile updated.', 'success');
+      } catch (error) {
+        showStatus(profileStatus, error.message || 'Profile update failed.', 'error');
+      }
+    });
+
+    memberLogoutBtn.addEventListener('click', async () => {
+      try {
+        await requestJson('/api/member/logout', { method: 'POST' });
+      } catch (error) {
+        // Local UI still resets so the user can sign in again.
+      }
+
+      clearDashboard('You are logged out.');
+      showStatus(loginStatus, 'Logged out successfully.', 'success');
+      switchTab('login');
+      scrollToMembers();
+    });
+
+    verifyFromUrl().then(verified => {
+      if (!verified) {
+        loadMemberSession();
+      }
+    });
   })();
 </script>
 </body>

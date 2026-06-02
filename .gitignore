@@ -1,0 +1,4 @@
+server/node_modules/
+node_modules/
+data/members.json
+data/uploads/
