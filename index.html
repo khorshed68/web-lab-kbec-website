@@ -1104,6 +1104,97 @@
     }
     .event-form-status.error { color: #d32f2f; }
     .event-form-status.success { color: #388e3c; }
+    .event-ticket-panel {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border: 1px solid rgba(0, 102, 204, 0.2);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(0, 102, 204, 0.05), rgba(255,255,255,0.92));
+    }
+    .event-ticket-panel[hidden] { display: none; }
+    .event-ticket-copy h4 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 2vw, 30px);
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .event-ticket-copy p {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+    .event-ticket-qr-wrap {
+      justify-self: end;
+      width: 100%;
+      max-width: 320px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 102, 204, 0.16);
+      background: white;
+      box-shadow: 0 18px 30px rgba(0, 102, 204, 0.08);
+    }
+    .event-ticket-qr-wrap img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .event-ticket-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .event-ticket-actions .event-register-btn {
+      padding: 12px 18px;
+    }
+    .member-ticket-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .member-ticket-card {
+      border: 1px solid rgba(0, 102, 204, 0.14);
+      border-radius: 14px;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      display: grid;
+      gap: 10px;
+    }
+    .member-ticket-card h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      line-height: 1.15;
+      color: var(--text);
+    }
+    .member-ticket-meta {
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .member-ticket-status {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: rgba(0, 102, 204, 0.08);
+      color: var(--accent-light);
+    }
+    .member-ticket-status.attended {
+      background: rgba(46, 125, 50, 0.1);
+      color: #2e7d32;
+    }
 
     /* ── OPPORTUNITY BOARD ── */
     #opportunities {
@@ -3207,6 +3298,9 @@
               <p class="member-status" id="memberProfileStatus" aria-live="polite"></p>
             </div>
           </form>
+
+          <div class="member-help" style="margin-top:4px">Your registered event tickets and attendance status will appear below after you enroll in an event.</div>
+          <div id="memberTicketList" class="member-ticket-list"></div>
         </div>
       </div>
     </div>
@@ -3322,6 +3416,22 @@
           <p class="event-form-status" id="eventFormStatus" aria-live="polite"></p>
         </div>
       </form>
+
+      <div class="event-ticket-panel" id="eventTicketPanel" hidden>
+        <div class="event-ticket-copy">
+          <p class="spotlight-label">Digital Ticket</p>
+          <h4 id="eventTicketTitle">Ticket</h4>
+          <p id="eventTicketMeta"></p>
+          <p id="eventTicketStatus"></p>
+        </div>
+        <div class="event-ticket-qr-wrap">
+          <img id="eventTicketQr" alt="Event ticket QR code" />
+        </div>
+        <div class="event-ticket-actions">
+          <button type="button" class="event-submit" id="copyTicketLinkBtn">Copy Check-in Link</button>
+          <button type="button" class="event-register-btn" id="closeTicketPanelBtn">Close Ticket</button>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -3953,44 +4063,55 @@
   });
 
   // ── UPCOMING EVENTS CALENDAR ──
-  const EVENT_DATA = [
+  const EVENT_SEED = [
     {
+      id: 'nexus-case-challenge-2026',
       title: 'NEXUS National Case Challenge 2026',
       type: 'Case Competition',
       start: '2026-05-16',
       end: '2026-05-17',
       deadline: '2026-05-12',
       venue: 'KUET Auditorium',
-      summary: 'Inter-university business case competition focused on strategy, analysis, and presentation.'
+      summary: 'Inter-university business case competition focused on strategy, analysis, and presentation.',
+      capacity: 180
     },
     {
+      id: 'innovate-tech-fest-2026',
       title: 'InnovateTech Fest 2026',
       type: 'Tech Fest',
       start: '2026-06-05',
       end: '2026-06-07',
       deadline: '2026-06-01',
       venue: 'KUET Campus',
-      summary: 'A three-day festival of startup pitches, hackathons, product showcases, and founder talks.'
+      summary: 'A three-day festival of startup pitches, hackathons, product showcases, and founder talks.',
+      capacity: 240
     },
     {
+      id: 'tdexkuet-ideas-leadership-session',
       title: 'TDExKUET Ideas & Leadership Session',
       type: 'Talk',
       start: '2026-07-10',
       end: '2026-07-10',
       deadline: '2026-07-04',
       venue: 'ECE Building, Room 204',
-      summary: 'A curated leadership session featuring inspiring speakers and practical ideas for students.'
+      summary: 'A curated leadership session featuring inspiring speakers and practical ideas for students.',
+      capacity: 120
     },
     {
+      id: 'kbec-entrepreneurship-summit-2026',
       title: 'KBEC Entrepreneurship Summit 2026',
       type: 'Summit',
       start: '2026-08-20',
       end: '2026-08-21',
       deadline: '2026-08-13',
       venue: 'KUET Gymnasium',
-      summary: 'Our flagship summit bringing together entrepreneurs, investors, and thought leaders.'
+      summary: 'Our flagship summit bringing together entrepreneurs, investors, and thought leaders.',
+      capacity: 300
     }
   ];
+
+  let EVENT_DATA = [...EVENT_SEED];
+  let MEMBER_EVENT_TICKETS = [];
 
   const calendarGrid = document.getElementById('calendarGrid');
   const calendarMonthLabel = document.getElementById('calendarMonthLabel');
@@ -4004,6 +4125,14 @@
   const eventRegistrationForm = document.getElementById('eventRegistrationForm');
   const eventFormStatus = document.getElementById('eventFormStatus');
   const eventSelect = document.getElementById('eventSelect');
+  const eventTicketPanel = document.getElementById('eventTicketPanel');
+  const eventTicketTitle = document.getElementById('eventTicketTitle');
+  const eventTicketMeta = document.getElementById('eventTicketMeta');
+  const eventTicketStatus = document.getElementById('eventTicketStatus');
+  const eventTicketQr = document.getElementById('eventTicketQr');
+  const copyTicketLinkBtn = document.getElementById('copyTicketLinkBtn');
+  const closeTicketPanelBtn = document.getElementById('closeTicketPanelBtn');
+  const memberTicketList = document.getElementById('memberTicketList');
 
   const calendarState = {
     today: new Date(),
@@ -4039,6 +4168,150 @@
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
+  function getEventStatus(eventItem, registeredCount) {
+    const deadlineDate = toNoonDate(eventItem.deadline);
+    const today = new Date();
+    today.setHours(12, 0, 0, 0);
+    const capacity = Number(eventItem.capacity || 0);
+    const remainingSeats = Math.max(capacity - registeredCount, 0);
+    const registrationClosed = isBeforeDay(deadlineDate, today) || isBeforeDay(toNoonDate(eventItem.end), today);
+
+    return {
+      remainingSeats,
+      registeredCount,
+      isFull: remainingSeats <= 0,
+      registrationClosed,
+      status: remainingSeats <= 0 ? 'Full' : (registrationClosed ? 'Closed' : 'Open')
+    };
+  }
+
+  function getEventByKey(eventKey) {
+    return EVENT_DATA.find(item => item.id === eventKey || item.title === eventKey) || null;
+  }
+
+  function buildTicketLabel(ticket) {
+    if (!ticket) return 'No ticket yet';
+    return ticket.attendedAt ? 'Attended' : 'Booked';
+  }
+
+  async function requestJson(url, options = {}) {
+    const response = await fetch(url, {
+      credentials: 'same-origin',
+      ...options,
+      headers: {
+        ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+        ...(options.headers || {})
+      }
+    });
+
+    let payload = {};
+    try {
+      payload = await response.json();
+    } catch (error) {
+      payload = {};
+    }
+
+    if (!response.ok) {
+      const error = new Error(payload.message || 'Request failed');
+      error.status = response.status;
+      error.payload = payload;
+      throw error;
+    }
+
+    return payload;
+  }
+
+  function setEventTicketPanel(ticket) {
+    if (!ticket) {
+      eventTicketPanel.setAttribute('hidden', '');
+      eventTicketQr.removeAttribute('src');
+      eventTicketQr.removeAttribute('data-check-in-url');
+      return;
+    }
+
+    eventTicketPanel.removeAttribute('hidden');
+    eventTicketTitle.textContent = ticket.title;
+    eventTicketMeta.textContent = `${ticket.ticketCode} • ${ticket.type} • ${ticket.venue}`;
+    eventTicketStatus.textContent = `${buildTicketLabel(ticket)} • ${ticket.attendedAt ? `Checked in ${new Date(ticket.attendedAt).toLocaleString()}` : 'Show this QR at the venue.'}`;
+    eventTicketQr.src = ticket.qrDataUrl;
+    eventTicketQr.alt = `${ticket.title} ticket QR code`;
+    eventTicketQr.dataset.checkInUrl = ticket.checkInUrl || '';
+    eventTicketPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function renderMemberTickets() {
+    if (!memberTicketList) return;
+
+    if (!MEMBER_EVENT_TICKETS.length) {
+      memberTicketList.innerHTML = '<p class="member-dashboard-copy">No event tickets yet. Register for an event and your ticket will appear here.</p>';
+      return;
+    }
+
+    memberTicketList.innerHTML = MEMBER_EVENT_TICKETS.map(ticket => `
+      <article class="member-ticket-card">
+        <div>
+          <p class="members-eyebrow">Event Ticket</p>
+          <h4>${ticket.title}</h4>
+        </div>
+        <p class="member-ticket-meta">${ticket.ticketCode} • ${ticket.type} • ${ticket.venue}</p>
+        <p class="member-ticket-meta">${ticket.start} - ${ticket.end}</p>
+        <span class="member-ticket-status${ticket.attendedAt ? ' attended' : ''}">${ticket.attendedAt ? 'Attendance Marked' : 'Awaiting Check-in'}</span>
+        <button type="button" class="event-register-btn" data-open-ticket="${ticket.ticketCode}">View QR Ticket</button>
+      </article>
+    `).join('');
+  }
+
+  async function loadEventCatalog() {
+    try {
+      const payload = await requestJson('/api/events');
+      EVENT_DATA = Array.isArray(payload.events) && payload.events.length ? payload.events : [...EVENT_SEED];
+      MEMBER_EVENT_TICKETS = Array.isArray(payload.myTickets) ? payload.myTickets : [];
+    } catch (error) {
+      EVENT_DATA = [...EVENT_SEED];
+      MEMBER_EVENT_TICKETS = [];
+    }
+
+    populateEventSelect();
+    renderCalendar();
+    renderMemberTickets();
+  }
+
+  async function loadMemberProfileIntoEventForm() {
+    try {
+      const result = await requestJson('/api/member/me');
+      const member = result.member || {};
+      const fields = {
+        name: document.getElementById('eventRegName'),
+        email: document.getElementById('eventRegEmail'),
+        phone: document.getElementById('eventRegPhone'),
+        department: document.getElementById('eventRegDept'),
+        batch: document.getElementById('eventRegBatch')
+      };
+
+      if (fields.name) fields.name.value = member.name || '';
+      if (fields.email) fields.email.value = member.email || '';
+      if (fields.phone) fields.phone.value = member.phone || '';
+      if (fields.department) fields.department.value = member.department || '';
+      if (fields.batch) fields.batch.value = member.batch || '';
+    } catch (error) {
+      const fields = [
+        document.getElementById('eventRegName'),
+        document.getElementById('eventRegEmail'),
+        document.getElementById('eventRegPhone'),
+        document.getElementById('eventRegDept'),
+        document.getElementById('eventRegBatch')
+      ];
+      fields.forEach(field => {
+        if (field) field.value = '';
+      });
+    }
+  }
+
+  window.addEventListener('kbec:member-changed', () => {
+    loadMemberProfileIntoEventForm();
+    loadEventCatalog();
+  });
+
   function getEventDateRange(eventItem) {
     return {
       start: toNoonDate(eventItem.start),
@@ -4069,8 +4342,8 @@
     eventSelect.innerHTML = '<option value="">Select your event</option>';
     EVENT_DATA.forEach(eventItem => {
       const option = document.createElement('option');
-      option.value = eventItem.title;
-      option.textContent = eventItem.title;
+      option.value = eventItem.id || eventItem.title;
+      option.textContent = `${eventItem.title} (${eventItem.status || 'Open'}${typeof eventItem.remainingSeats === 'number' ? `, ${eventItem.remainingSeats} seats left` : ''})`;
       eventSelect.appendChild(option);
     });
   }
@@ -4078,7 +4351,8 @@
   function openEventRegistration(eventName = '') {
     eventRegistrationPanel.removeAttribute('hidden');
     if (eventName) {
-      eventSelect.value = eventName;
+      const selectedEvent = getEventByKey(eventName);
+      eventSelect.value = selectedEvent ? selectedEvent.id : eventName;
     }
     eventFormStatus.textContent = '';
     eventFormStatus.className = 'event-form-status';
@@ -4108,7 +4382,8 @@
         </div>
         <p>${eventItem.summary}</p>
         <p class="deadline-meta">Event dates: ${formatLongDate(toNoonDate(eventItem.start))}${eventItem.start !== eventItem.end ? ` - ${formatLongDate(toNoonDate(eventItem.end))}` : ''} | Venue: ${eventItem.venue}</p>
-        <button type="button" class="event-register-btn" data-event-title="${eventItem.title}">Register for This Event</button>
+        <p class="deadline-meta">Seats: ${typeof eventItem.remainingSeats === 'number' ? eventItem.remainingSeats : '-'} left of ${eventItem.capacity || '-'}</p>
+        <button type="button" class="event-register-btn" data-event-title="${eventItem.id || eventItem.title}"${eventItem.status === 'Full' || eventItem.status === 'Closed' ? ' disabled' : ''}>${eventItem.status === 'Full' ? 'Sold Out' : (eventItem.status === 'Closed' ? 'Closed' : 'Register for This Event')}</button>
       </article>
     `).join('');
   }
@@ -4128,7 +4403,7 @@
     events.forEach(eventItem => {
       const item = document.createElement('div');
       item.className = 'deadline-spotlight-item';
-      item.innerHTML = `<strong>${eventItem.title}</strong><br>${eventItem.type} | ${eventItem.venue}<br>${formatLongDate(toNoonDate(eventItem.start))}${eventItem.start !== eventItem.end ? ` - ${formatLongDate(toNoonDate(eventItem.end))}` : ''}<br><button type="button" class="event-register-btn" data-event-title="${eventItem.title}" style="margin-top:10px">Register</button>`;
+      item.innerHTML = `<strong>${eventItem.title}</strong><br>${eventItem.type} | ${eventItem.venue}<br>${formatLongDate(toNoonDate(eventItem.start))}${eventItem.start !== eventItem.end ? ` - ${formatLongDate(toNoonDate(eventItem.end))}` : ''}<br><button type="button" class="event-register-btn" data-event-title="${eventItem.id || eventItem.title}" style="margin-top:10px"${eventItem.status === 'Full' || eventItem.status === 'Closed' ? ' disabled' : ''}>${eventItem.status === 'Full' ? 'Sold Out' : (eventItem.status === 'Closed' ? 'Closed' : 'Register')}</button>`;
       selectedDateEvents.appendChild(item);
     });
 
@@ -4231,16 +4506,66 @@
     }
 
     const data = new FormData(eventRegistrationForm);
-    const name = (data.get('name') || '').toString().trim();
-    const selectedEvent = (data.get('event') || '').toString().trim();
+    const eventId = (data.get('event') || '').toString().trim();
+    const note = (data.get('note') || '').toString().trim();
 
-    eventFormStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration for ${selectedEvent} has been submitted.`;
-    eventFormStatus.className = 'event-form-status success';
-    eventRegistrationForm.reset();
+    eventFormStatus.textContent = 'Registering your seat...';
+    eventFormStatus.className = 'event-form-status';
+
+    requestJson('/api/events/register', {
+      method: 'POST',
+      body: JSON.stringify({ eventId, note })
+    })
+      .then(result => {
+        const ticket = result.ticket;
+        eventFormStatus.innerHTML = `${result.message || 'Registration confirmed.'} ${ticket ? '<a href="#eventTicketPanel">View ticket</a>' : ''}`;
+        eventFormStatus.className = 'event-form-status success';
+        eventRegistrationForm.reset();
+        if (ticket) {
+          setEventTicketPanel(ticket);
+          if (MEMBER_EVENT_TICKETS.find(item => item.ticketCode === ticket.ticketCode)) {
+            MEMBER_EVENT_TICKETS = MEMBER_EVENT_TICKETS.map(item => item.ticketCode === ticket.ticketCode ? ticket : item);
+          } else {
+            MEMBER_EVENT_TICKETS.unshift(ticket);
+          }
+          renderMemberTickets();
+          loadEventCatalog().catch(() => {});
+        }
+      })
+      .catch(error => {
+        eventFormStatus.textContent = error.message || 'Registration failed.';
+        eventFormStatus.className = 'event-form-status error';
+      });
   });
 
-  populateEventSelect();
-  renderCalendar();
+  if (closeTicketPanelBtn) {
+    closeTicketPanelBtn.addEventListener('click', () => setEventTicketPanel(null));
+  }
+
+  if (copyTicketLinkBtn) {
+    copyTicketLinkBtn.addEventListener('click', async () => {
+      const checkInUrl = eventTicketQr.dataset.checkInUrl || '';
+      if (!checkInUrl) return;
+      try {
+        await navigator.clipboard.writeText(checkInUrl);
+        eventFormStatus.textContent = 'Check-in link copied to clipboard.';
+        eventFormStatus.className = 'event-form-status success';
+      } catch (error) {
+        eventFormStatus.textContent = 'Could not copy the link. Use the QR code instead.';
+        eventFormStatus.className = 'event-form-status error';
+      }
+    });
+  }
+
+  document.addEventListener('click', event => {
+    const ticketButton = event.target.closest('[data-open-ticket]');
+    if (!ticketButton) return;
+    const ticket = MEMBER_EVENT_TICKETS.find(item => item.ticketCode === ticketButton.dataset.openTicket);
+    if (ticket) setEventTicketPanel(ticket);
+  });
+
+  loadMemberProfileIntoEventForm();
+  loadEventCatalog();
 
   // ── OPPORTUNITY BOARD FILTERS ──
   const opportunityFilters = document.getElementById('opportunityFilters');
@@ -4614,6 +4939,7 @@
       profileFields.batch.value = member.batch || '';
       profileFields.interest.value = member.interest || '';
       profileFields.bio.value = member.bio || '';
+      window.dispatchEvent(new Event('kbec:member-changed'));
     }
 
     function clearDashboard(message) {
@@ -4625,6 +4951,7 @@
       dashboardEmail.textContent = '-';
       dashboardJoined.textContent = '-';
       profileForm.reset();
+      window.dispatchEvent(new Event('kbec:member-changed'));
     }
 
     async function requestJson(url, options = {}) {

@@ -13,21 +13,79 @@ try {
   nodemailer = null;
 }
 
+let QRCode = null;
+try {
+  QRCode = require('qrcode');
+} catch (error) {
+  QRCode = null;
+}
+
 const fsp = fs.promises;
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const UPLOADS = path.join(DATA_DIR, 'uploads');
 const SUBMISSIONS_FILE = path.join(DATA_DIR, 'submissions.json');
 const MEMBERS_FILE = path.join(DATA_DIR, 'members.json');
+const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
+const EVENT_REGISTRATIONS_FILE = path.join(DATA_DIR, 'event-registrations.json');
 const SESSION_COOKIE = 'kbec_member_session';
 const AUTH_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const VERIFY_TTL_MS = 48 * 60 * 60 * 1000;
 const KUET_EMAIL_RE = /^[^\s@]+@kuet\.ac\.bd$/i;
+
+const EVENT_SEED = [
+  {
+    id: 'nexus-case-challenge-2026',
+    title: 'NEXUS National Case Challenge 2026',
+    type: 'Case Competition',
+    start: '2026-05-16',
+    end: '2026-05-17',
+    deadline: '2026-05-12',
+    venue: 'KUET Auditorium',
+    summary: 'Inter-university business case competition focused on strategy, analysis, and presentation.',
+    capacity: 180
+  },
+  {
+    id: 'innovate-tech-fest-2026',
+    title: 'InnovateTech Fest 2026',
+    type: 'Tech Fest',
+    start: '2026-06-05',
+    end: '2026-06-07',
+    deadline: '2026-06-01',
+    venue: 'KUET Campus',
+    summary: 'A three-day festival of startup pitches, hackathons, product showcases, and founder talks.',
+    capacity: 240
+  },
+  {
+    id: 'tdexkuet-ideas-leadership-session',
+    title: 'TDExKUET Ideas & Leadership Session',
+    type: 'Talk',
+    start: '2026-07-10',
+    end: '2026-07-10',
+    deadline: '2026-07-04',
+    venue: 'ECE Building, Room 204',
+    summary: 'A curated leadership session featuring inspiring speakers and practical ideas for students.',
+    capacity: 120
+  },
+  {
+    id: 'kbec-entrepreneurship-summit-2026',
+    title: 'KBEC Entrepreneurship Summit 2026',
+    type: 'Summit',
+    start: '2026-08-20',
+    end: '2026-08-21',
+    deadline: '2026-08-13',
+    venue: 'KUET Gymnasium',
+    summary: 'Our flagship summit bringing together entrepreneurs, investors, and thought leaders.',
+    capacity: 300
+  }
+];
 
 async function ensureDataDirs() {
   await fsp.mkdir(DATA_DIR, { recursive: true });
   await fsp.mkdir(UPLOADS, { recursive: true });
   try { await fsp.access(SUBMISSIONS_FILE); } catch (error) { await fsp.writeFile(SUBMISSIONS_FILE, '[]', 'utf8'); }
   try { await fsp.access(MEMBERS_FILE); } catch (error) { await fsp.writeFile(MEMBERS_FILE, '[]', 'utf8'); }
+  try { await fsp.access(EVENTS_FILE); } catch (error) { await fsp.writeFile(EVENTS_FILE, JSON.stringify(EVENT_SEED, null, 2), 'utf8'); }
+  try { await fsp.access(EVENT_REGISTRATIONS_FILE); } catch (error) { await fsp.writeFile(EVENT_REGISTRATIONS_FILE, '[]', 'utf8'); }
 }
 
 function sanitize(str) {
@@ -80,6 +138,29 @@ function normalizePhone(value) {
   return (value || '').toString().trim().replace(/\s+/g, ' ');
 }
 
+function normalizeEventId(value) {
+  return (value || '').toString().trim();
+}
+
+function toNoonDate(value) {
+  const [year, month, day] = (value || '').split('-').map(Number);
+  return new Date(year, month - 1, day, 12, 0, 0, 0);
+}
+
+function isBeforeDay(left, right) {
+  const compareLeft = new Date(left.getFullYear(), left.getMonth(), left.getDate());
+  const compareRight = new Date(right.getFullYear(), right.getMonth(), right.getDate());
+  return compareLeft < compareRight;
+}
+
+function formatLongDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+function formatShortDate(date) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 function isExpired(timestamp) {
   return !timestamp || Date.now() > Number(timestamp);
 }
@@ -128,6 +209,94 @@ async function saveMembers(members) {
   await writeJsonFile(MEMBERS_FILE, members);
 }
 
+async function loadEvents() {
+  const events = await readJsonFile(EVENTS_FILE);
+  if (!Array.isArray(events) || events.length === 0) {
+    await saveEvents(EVENT_SEED);
+    return EVENT_SEED;
+  }
+  return events;
+}
+
+async function saveEvents(events) {
+  await writeJsonFile(EVENTS_FILE, events);
+}
+
+async function loadEventRegistrations() {
+  return readJsonFile(EVENT_REGISTRATIONS_FILE);
+}
+
+async function saveEventRegistrations(registrations) {
+  await writeJsonFile(EVENT_REGISTRATIONS_FILE, registrations);
+}
+
+function getEventStatus(event, registrationCount, today = new Date()) {
+  const deadline = toNoonDate(event.deadline);
+  const start = toNoonDate(event.start);
+  const capacity = Number(event.capacity || 0);
+  const remainingSeats = Math.max(capacity - registrationCount, 0);
+  const registrationClosed = isBeforeDay(deadline, today) || isBeforeDay(new Date(event.end), today);
+  return {
+    remainingSeats,
+    registeredCount: registrationCount,
+    isFull: remainingSeats <= 0,
+    registrationClosed,
+    status: remainingSeats <= 0 ? 'Full' : (registrationClosed ? 'Closed' : 'Open'),
+    startsSoon: !isBeforeDay(start, today)
+  };
+}
+
+function buildEventPublicPayload(event, registrations, today = new Date()) {
+  const registrationCount = registrations.filter(entry => entry.eventId === event.id).length;
+  return {
+    ...event,
+    startLabel: formatLongDate(toNoonDate(event.start)),
+    endLabel: formatLongDate(toNoonDate(event.end)),
+    deadlineLabel: formatLongDate(toNoonDate(event.deadline)),
+    deadlineShort: formatShortDate(toNoonDate(event.deadline)),
+    ...getEventStatus(event, registrationCount, today)
+  };
+}
+
+async function createTicketQrDataUrl(baseUrl, ticketToken) {
+  const checkInUrl = `${baseUrl}/api/events/check-in?ticket=${encodeURIComponent(ticketToken)}`;
+  if (QRCode) {
+    return QRCode.toDataURL(checkInUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 320,
+      type: 'image/png'
+    });
+  }
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320"><rect width="320" height="320" fill="white"/><rect x="24" y="24" width="272" height="272" rx="18" fill="#f5f8ff" stroke="#0066cc" stroke-width="6"/><text x="160" y="148" font-family="Arial" font-size="20" text-anchor="middle" fill="#0b2540">KBEC Ticket QR</text><text x="160" y="180" font-family="Arial" font-size="11" text-anchor="middle" fill="#52616b">${sanitize(checkInUrl)}</text></svg>`)}`;
+}
+
+function buildEventTicket(registration, event) {
+  return {
+    id: registration.id,
+    ticketCode: registration.ticketCode,
+    ticketToken: registration.ticketToken,
+    eventId: event.id,
+    title: event.title,
+    type: event.type,
+    venue: event.venue,
+    start: event.start,
+    end: event.end,
+    deadline: event.deadline,
+    memberName: registration.memberName,
+    memberEmail: registration.memberEmail,
+    memberPhone: registration.memberPhone,
+    department: registration.department,
+    batch: registration.batch,
+    note: registration.note || '',
+    registeredAt: registration.registeredAt,
+    attendedAt: registration.attendedAt || null,
+    qrDataUrl: registration.qrDataUrl,
+    checkInUrl: registration.checkInUrl
+  };
+}
+
 async function findCurrentMember(req) {
   const cookies = parseCookies(req);
   const token = cookies[SESSION_COOKIE];
@@ -141,6 +310,10 @@ async function findCurrentMember(req) {
 
 function buildVerificationLink(req, token) {
   return `${req.protocol}://${req.get('host')}/?verify=${encodeURIComponent(token)}`;
+}
+
+function getRequestBaseUrl(req) {
+  return `${req.protocol}://${req.get('host')}`;
 }
 
 function createMailer() {
@@ -243,6 +416,139 @@ async function sendVerificationMessage(req, member) {
       res.status(500).json({ message: error.message || 'Server error' });
     }
   });
+
+  app.get('/api/events', async (req, res) => {
+    try {
+      const [events, registrations] = await Promise.all([loadEvents(), loadEventRegistrations()]);
+      const memberSession = await findCurrentMember(req);
+      const payload = events.map(event => buildEventPublicPayload(event, registrations));
+      const myTickets = memberSession
+        ? registrations
+            .filter(registration => registration.memberId === memberSession.member.id)
+            .map(registration => {
+              const event = events.find(item => item.id === registration.eventId);
+              return event ? buildEventTicket(registration, event) : null;
+            })
+            .filter(Boolean)
+        : [];
+
+      res.json({ ok: true, events: payload, myTickets });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message || 'Server error' });
+    }
+  });
+
+  app.post('/api/events/register', async (req, res) => {
+    try {
+      const session = await findCurrentMember(req);
+      if (!session) return res.status(401).json({ message: 'Please log in with a verified KUET member account first.' });
+
+      const eventId = normalizeEventId(req.body.eventId || req.body.event);
+      const note = normalizeText(req.body.note);
+      if (!eventId) return res.status(400).json({ message: 'Select an event.' });
+
+      const [events, registrations] = await Promise.all([loadEvents(), loadEventRegistrations()]);
+      const event = events.find(item => item.id === eventId);
+      if (!event) return res.status(404).json({ message: 'Event not found.' });
+
+      const eventRegistrationCount = registrations.filter(entry => entry.eventId === event.id).length;
+      const status = getEventStatus(event, eventRegistrationCount);
+      if (status.registrationClosed) return res.status(410).json({ message: 'Registration for this event is closed.' });
+      if (status.isFull) return res.status(409).json({ message: 'This event is full. Please choose another event.' });
+
+      const existing = registrations.find(entry => entry.eventId === event.id && entry.memberId === session.member.id);
+      if (existing) {
+        return res.json({ ok: true, alreadyRegistered: true, ticket: buildEventTicket(existing, event), event: buildEventPublicPayload(event, registrations) });
+      }
+
+      const baseUrl = getRequestBaseUrl(req);
+      const ticketToken = generateToken(20);
+      const ticketCode = `KBEC-${event.id.split('-')[0].toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+      const checkInUrl = `${baseUrl}/api/events/check-in?ticket=${encodeURIComponent(ticketToken)}`;
+      const qrDataUrl = await createTicketQrDataUrl(baseUrl, ticketToken);
+      const now = new Date().toISOString();
+      const registration = {
+        id: generateToken(12),
+        eventId: event.id,
+        memberId: session.member.id,
+        memberName: session.member.name,
+        memberEmail: session.member.email,
+        memberPhone: session.member.phone || '',
+        department: session.member.department || '',
+        batch: session.member.batch || '',
+        note,
+        ticketCode,
+        ticketToken,
+        qrDataUrl,
+        checkInUrl,
+        registeredAt: now,
+        attendedAt: null
+      };
+
+      registrations.unshift(registration);
+      await saveEventRegistrations(registrations);
+
+      res.status(201).json({
+        ok: true,
+        message: 'Registration confirmed. Your ticket has been generated.',
+        event: buildEventPublicPayload(event, registrations),
+        ticket: buildEventTicket(registration, event)
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message || 'Server error' });
+    }
+  });
+
+  app.get('/api/events/my-tickets', async (req, res) => {
+    try {
+      const session = await findCurrentMember(req);
+      if (!session) return res.status(401).json({ message: 'Please log in first.' });
+
+      const [events, registrations] = await Promise.all([loadEvents(), loadEventRegistrations()]);
+      const tickets = registrations
+        .filter(entry => entry.memberId === session.member.id)
+        .map(registration => {
+          const event = events.find(item => item.id === registration.eventId);
+          return event ? buildEventTicket(registration, event) : null;
+        })
+        .filter(Boolean)
+        .sort((left, right) => new Date(right.registeredAt) - new Date(left.registeredAt));
+
+      res.json({ ok: true, tickets });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message || 'Server error' });
+    }
+  });
+
+  async function markEventAttendance(req, res) {
+    try {
+      const ticketToken = normalizeText(req.query.ticket || req.body.ticket || req.body.ticketToken);
+      if (!ticketToken) return res.status(400).json({ message: 'Ticket token is required.' });
+
+      const [events, registrations] = await Promise.all([loadEvents(), loadEventRegistrations()]);
+      const registration = registrations.find(entry => entry.ticketToken === ticketToken);
+      if (!registration) return res.status(404).json({ message: 'Ticket not found.' });
+
+      const event = events.find(item => item.id === registration.eventId);
+      if (!event) return res.status(404).json({ message: 'Event not found.' });
+
+      if (!registration.attendedAt) {
+        registration.attendedAt = new Date().toISOString();
+        await saveEventRegistrations(registrations);
+      }
+
+      res.json({ ok: true, message: 'Attendance recorded.', ticket: buildEventTicket(registration, event) });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message || 'Server error' });
+    }
+  }
+
+  app.get('/api/events/check-in', markEventAttendance);
+  app.post('/api/events/check-in', express.json({ limit: '1mb' }), markEventAttendance);
 
   app.post('/api/member/register', async (req, res) => {
     try {
@@ -507,6 +813,31 @@ async function sendVerificationMessage(req, member) {
       res.json(submissions);
     } catch (error) {
       res.status(500).json({ message: 'Failed to read submissions' });
+    }
+  });
+
+  app.get('/api/admin/event-registrations', async (req, res) => {
+    const pass = process.env.ADMIN_PASS;
+    const provided = req.headers['x-admin-pass'] || req.query.pass;
+    if (!pass) return res.status(500).json({ message: 'Admin password not set on server (set ADMIN_PASS env).' });
+    if (!provided || provided !== pass) return res.status(401).json({ message: 'Unauthorized' });
+
+    try {
+      const [events, registrations] = await Promise.all([loadEvents(), loadEventRegistrations()]);
+      const payload = registrations.map(registration => {
+        const event = events.find(item => item.id === registration.eventId);
+        return {
+          ...registration,
+          eventTitle: event ? event.title : registration.eventId,
+          eventType: event ? event.type : '',
+          eventVenue: event ? event.venue : '',
+          eventStart: event ? event.start : '',
+          eventEnd: event ? event.end : ''
+        };
+      });
+      res.json(payload);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to read event registrations' });
     }
   });
 

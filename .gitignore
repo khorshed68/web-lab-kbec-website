@@ -1,4 +1,6 @@
 server/node_modules/
 node_modules/
 data/members.json
+data/events.json
+data/event-registrations.json
 data/uploads/
