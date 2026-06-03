@@ -2852,9 +2852,9 @@
   }
   .members-head {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
     gap: 24px;
-    align-items: flex-end;
     margin-bottom: 28px;
   }
   .members-eyebrow {
@@ -2867,6 +2867,7 @@
     font-size: 10px;
     font-weight: 600;
     margin-bottom: 14px;
+    justify-content: center;
   }
   .members-eyebrow::before {
     content: '';
@@ -2878,8 +2879,9 @@
     font-family: 'Cinzel', serif;
     font-size: clamp(34px, 4.3vw, 56px);
     line-height: 1.08;
-    max-width: 720px;
-    margin-bottom: 12px;
+    max-width: 900px;
+    margin: 0 auto 12px;
+    text-align: center;
     color: var(--text);
   }
   .members-copy {
@@ -3134,10 +3136,10 @@
 <section id="members">
   <div class="members-wrap">
     <div class="members-head">
-      <div>
+      <div style="text-align:center">
         <p class="members-eyebrow">Member Portal</p>
-        <h2 class="members-title">Register with your KUET email, verify, then manage your club profile</h2>
-        <p class="members-copy">This portal gives every member one secure account for signup, login, profile updates, and dashboard access.</p>
+        <h2 class="members-title">Register with your KUET email, verify,<br>then manage your club profile</h2>
+        <p class="members-copy" style="margin:0 auto">This portal gives every member one secure account for signup, login, profile updates, and dashboard access.</p>
       </div>
       <div class="members-badge">KUET Email Required</div>
     </div>
