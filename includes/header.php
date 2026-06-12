@@ -118,7 +118,7 @@ function renderHeader(string $pageTitle = 'KBEC', string $activeNav = 'dashboard
     </a>
     <?php if ($isAdm): ?>
     <div class="nav-section">Admin</div>
-    <a href="<?= ($activeNav === 'admin_dashboard' ? '' : '../') ?>admin/index.php" class="<?= $activeNav === 'admin_dashboard' ? 'active' : '' ?>">
+    <a href="<?= ($activeNav === 'admin_dashboard' ? '' : '../') ?>admin/login.php" class="<?= $activeNav === 'admin_dashboard' ? 'active' : '' ?>">
       <i class="bi bi-speedometer2"></i> Admin Dashboard
     </a>
     <a href="<?= ($activeNav === 'admin_members' ? '' : '../') ?>admin/members.php" class="<?= $activeNav === 'admin_members' ? 'active' : '' ?>">

@@ -9,9 +9,7 @@ require_once __DIR__ . '/../includes/csrf.php';
 
 startSession();
 
-// Already logged in as admin → redirect to panel
-if (isAdmin()) { header('Location: index.php'); exit; }
-// Logged in as regular member → kick out
+if (isAdminPortalAuthenticated()) { header('Location: index.php'); exit; }
 if (isLoggedIn()) { logoutMember(); }
 
 $error = '';
@@ -33,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Log failed attempt (could extend with rate limiting)
             $error = 'Invalid admin credentials. Access denied.';
         } else {
-            loginMember($member);
+            loginAdminPortal($member);
             header('Location: index.php');
             exit;
         }

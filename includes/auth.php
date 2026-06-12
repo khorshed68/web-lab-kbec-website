@@ -39,6 +39,14 @@ function isAdmin(): bool
 }
 
 /**
+ * Signed in through the dedicated admin login portal?
+ */
+function isAdminPortalAuthenticated(): bool
+{
+    return isAdmin() && !empty($_SESSION['admin_portal_auth']);
+}
+
+/**
  * Return the current member's session data as an associative array,
  * or null if not logged in.
  */
@@ -80,6 +88,17 @@ function requireAdmin(string $redirect = '../index.php'): void
 }
 
 /**
+ * Redirect if visitor has not signed in via the admin login portal.
+ */
+function requireAdminPortal(string $redirect = 'login.php'): void
+{
+    if (!isAdminPortalAuthenticated()) {
+        header('Location: ' . $redirect);
+        exit;
+    }
+}
+
+/**
  * Populate session variables from a members DB row.
  */
 function loginMember(array $member): void
@@ -94,6 +113,16 @@ function loginMember(array $member): void
     $_SESSION['member_role']     = $member['role'];
     $_SESSION['member_verified'] = $member['verified'];
     $_SESSION['member_avatar']   = $member['profile_image'] ?? null;
+    unset($_SESSION['admin_portal_auth']);
+}
+
+/**
+ * Admin portal sign-in (admin/login.php only).
+ */
+function loginAdminPortal(array $member): void
+{
+    loginMember($member);
+    $_SESSION['admin_portal_auth'] = true;
 }
 
 /**

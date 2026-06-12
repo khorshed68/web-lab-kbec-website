@@ -8,11 +8,7 @@ require_once __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/csrf.php';
 startSession();
 
-// Redirect non-admins to admin login
-if (!isAdmin()) {
-    header('Location: login.php');
-    exit;
-}
+requireAdminPortal('login.php');
 
 /**
  * Render the full admin shell open tags.

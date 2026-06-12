@@ -190,9 +190,18 @@ try {
       border-radius: 2px;
       font-weight: 500 !important;
       transition: background 0.3s, color 0.3s !important;
+      white-space: nowrap;
     }
     .nav-cta::after { display: none !important; }
     .nav-cta:hover { background: var(--accent) !important; color: white !important; }
+    .nav-cta-admin {
+      border-color: #c9a84c;
+      color: #c9a84c !important;
+    }
+    .nav-cta-admin:hover {
+      background: #c9a84c !important;
+      color: #060810 !important;
+    }
 
     /* Mobile hamburger */
     .hamburger {
@@ -2793,10 +2802,8 @@ try {
     <li><a href="#resources">Resources</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#members">Members</a></li>
+    <li><a href="admin/login.php" class="nav-cta nav-cta-admin">Admin</a></li>
     <li><a href="#join" class="nav-cta">Join Us</a></li>
-    <?php if ($__isLoggedIn && $__memberRole === 'admin'): ?>
-    <li><a href="admin/index.php" style="color:#c9a84c;font-weight:700">⚙ Admin</a></li>
-    <?php endif; ?>
   </ul>
 
   <div class="hamburger" id="hamburger">
@@ -2814,6 +2821,7 @@ try {
   <a href="#resources">Resources</a>
   <a href="#sponsors">Sponsors</a>
   <a href="#members">Members</a>
+  <a href="admin/login.php">Admin</a>
   <a href="#join">Join Us</a>
 </div>
 

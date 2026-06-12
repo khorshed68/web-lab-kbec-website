@@ -128,6 +128,7 @@
   border-radius: 2px;
   font-weight: 500 !important;
   transition: background 0.3s, color 0.3s !important;
+  white-space: nowrap;
 }
 .nav-cta:hover { 
   background: var(--accent) !important;   /* Was: var(--gold) */
