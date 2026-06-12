@@ -9,7 +9,25 @@ $__memberCode   = $_SESSION['member_code']   ?? '';
 $__memberRole   = $_SESSION['member_role']   ?? 'member';
 $__memberAvatar = $_SESSION['member_avatar'] ?? null;
 $__csrf         = csrfToken();
+
+// ── Load dynamic DB content ────────────────────────────────
+try {
+    $__db   = getDB();
+    $__sRows= $__db->query("SELECT setting_key,setting_value FROM site_settings")->fetchAll();
+    $__S    = [];
+    foreach ($__sRows as $r) $__S[$r['setting_key']] = $r['setting_value'];
+    $S = fn(string $k, string $d='') => htmlspecialchars($__S[$k] ?? $d, ENT_QUOTES);
+
+    $__announcements = $__db->query("SELECT * FROM announcements WHERE is_active=1 ORDER BY created_at DESC")->fetchAll();
+    $__team          = $__db->query("SELECT * FROM team_members WHERE is_active=1 ORDER BY position_order ASC, name ASC")->fetchAll();
+    $__sponsors      = $__db->query("SELECT * FROM sponsors WHERE is_active=1 ORDER BY sort_order ASC")->fetchAll();
+    $__gallery       = $__db->query("SELECT * FROM gallery ORDER BY sort_order ASC, created_at DESC LIMIT 24")->fetchAll();
+} catch (Throwable $e) {
+    $__S=[]; $S=fn($k,$d='')=>htmlspecialchars($d,ENT_QUOTES);
+    $__announcements=$__team=$__sponsors=$__gallery=[];
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2776,6 +2794,9 @@ $__csrf         = csrfToken();
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#members">Members</a></li>
     <li><a href="#join" class="nav-cta">Join Us</a></li>
+    <?php if ($__isLoggedIn && $__memberRole === 'admin'): ?>
+    <li><a href="admin/index.php" style="color:#c9a84c;font-weight:700">⚙ Admin</a></li>
+    <?php endif; ?>
   </ul>
 
   <div class="hamburger" id="hamburger">
@@ -2796,7 +2817,23 @@ $__csrf         = csrfToken();
   <a href="#join">Join Us</a>
 </div>
 
+<!-- PHP Announcements Bar -->
+<?php if (!empty($__announcements)): ?>
+<?php foreach ($__announcements as $__ann):
+  $__annClr = ['info'=>'#3498db','warning'=>'#f39c12','success'=>'#27ae60','urgent'=>'#e74c3c'][$__ann['type']] ?? '#3498db';
+?>
+<div style="background:<?= $__annClr ?>18;border-bottom:2px solid <?= $__annClr ?>40;padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-size:.84rem;flex-wrap:wrap;font-family:'Outfit',sans-serif;position:relative;z-index:50">
+  <span style="background:<?= $__annClr ?>;color:#fff;padding:2px 10px;border-radius:999px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em"><?= htmlspecialchars($__ann['type'],ENT_QUOTES) ?></span>
+  <b style="color:<?= $__annClr ?>"><?= htmlspecialchars($__ann['title'],ENT_QUOTES) ?></b>
+  <?php if ($__ann['body']): ?><span style="color:rgba(0,0,0,.55);font-size:.79rem">— <?= htmlspecialchars(substr($__ann['body'],0,120),ENT_QUOTES) ?></span><?php endif; ?>
+  <?php if ($__ann['link'] && $__ann['link_label']): ?><a href="<?= htmlspecialchars($__ann['link'],ENT_QUOTES) ?>" target="_blank" style="background:<?= $__annClr ?>;color:#fff;padding:3px 13px;border-radius:999px;font-size:.72rem;font-weight:700;text-decoration:none"><?= htmlspecialchars($__ann['link_label'],ENT_QUOTES) ?> →</a><?php endif; ?>
+  <button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;color:rgba(0,0,0,.4);font-size:1.1rem;position:absolute;right:16px;top:50%;transform:translateY(-50%)" title="Dismiss">✕</button>
+</div>
+<?php endforeach; ?>
+<?php endif; ?>
+
 <!-- HERO -->
+
 <section id="hero">
   <!-- Layered BG -->
   <div class="hero-bg">
