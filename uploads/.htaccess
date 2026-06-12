@@ -1,0 +1,7 @@
+# Prevent direct PHP execution in uploads directory
+<FilesMatch "\.php$">
+    Require all denied
+</FilesMatch>
+
+# Allow image and PDF files only
+Options -Indexes

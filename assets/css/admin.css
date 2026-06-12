@@ -1,0 +1,70 @@
+/* ============================================================
+   KBEC Admin CSS — assets/css/admin.css
+   ============================================================ */
+
+/* Utility overrides for Bootstrap dark theme */
+.text-gold   { color: #c9a84c !important; }
+.bg-dark-kbec { background: #0a0d14 !important; }
+
+/* Stat card (used in admin/index.php via inline style too) */
+.stat-card {
+  background: linear-gradient(135deg, #141926, #1e2438);
+  border: 1px solid rgba(201,168,76,.12);
+  border-radius: 16px;
+  padding: 22px 18px;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+.stat-icon {
+  width: 44px; height: 44px; border-radius: 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; margin-bottom: 12px;
+}
+.stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1; }
+.stat-label { font-size: .7rem; color: rgba(255,255,255,.4); letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+
+/* Form helpers */
+textarea.kbec-input { resize: vertical; min-height: 80px; }
+select.kbec-input   { appearance: none; cursor: pointer; }
+
+/* Pagination active state override */
+.page-active {
+  background: linear-gradient(135deg, #c9a84c, #a8873a) !important;
+  color: #0a0d14 !important;
+  border-color: transparent !important;
+}
+
+/* Responsive table wrapper */
+.table-responsive-kbec { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* Admin-specific alert tweak */
+.kbec-alert + .kbec-alert { margin-top: -8px; }
+
+/* Badge overrides */
+.badge-gold, .badge-green, .badge-red, .badge-blue {
+  display: inline-block; padding: 3px 9px; border-radius: 999px;
+  font-size: .65rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+}
+.badge-gold  { background: rgba(201,168,76,.15); color: #c9a84c; border: 1px solid rgba(201,168,76,.3); }
+.badge-green { background: rgba(39,174,96,.12);  color: #27ae60; border: 1px solid rgba(39,174,96,.3);  }
+.badge-red   { background: rgba(231,76,60,.12);  color: #e74c3c; border: 1px solid rgba(231,76,60,.3);  }
+.badge-blue  { background: rgba(52,152,219,.12); color: #3498db; border: 1px solid rgba(52,152,219,.3); }
+
+/* Mobile sidebar toggle (hidden by default, shown via JS) */
+.sidebar-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 99;
+  display: none;
+}
+@media (max-width: 900px) {
+  .kbec-sidebar { transform: translateX(-100%); transition: transform .3s; }
+  .kbec-sidebar.open { transform: translateX(0); }
+  .kbec-main { margin-left: 0 !important; }
+  .sidebar-toggle {
+    position: fixed; top: 14px; left: 14px; z-index: 200;
+    background: #141926; border: 1px solid rgba(201,168,76,.3);
+    color: #c9a84c; width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.1rem;
+  }
+}
+@media (min-width: 901px) { .sidebar-toggle { display: none; } }

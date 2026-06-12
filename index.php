@@ -1,3 +1,15 @@
+<?php
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/includes/csrf.php';
+startSession();
+$__isLoggedIn   = isLoggedIn();
+$__memberName   = $_SESSION['member_name']   ?? '';
+$__memberCode   = $_SESSION['member_code']   ?? '';
+$__memberRole   = $_SESSION['member_role']   ?? 'member';
+$__memberAvatar = $_SESSION['member_avatar'] ?? null;
+$__csrf         = csrfToken();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -4358,7 +4370,7 @@
 
   async function loadEventCatalog() {
     try {
-      const payload = await requestJson('/api/events');
+      const payload = await requestJson('/kbec/api/events.php');
       EVENT_DATA = Array.isArray(payload.events) && payload.events.length ? payload.events : [...EVENT_SEED];
       MEMBER_EVENT_TICKETS = Array.isArray(payload.myTickets) ? payload.myTickets : [];
     } catch (error) {
@@ -4607,9 +4619,9 @@
     eventFormStatus.textContent = 'Registering your seat...';
     eventFormStatus.className = 'event-form-status';
 
-    requestJson('/api/events/register', {
+    requestJson('/kbec/api/register_event.php', {
       method: 'POST',
-      body: JSON.stringify({ eventId, note })
+      body: JSON.stringify({ event_id: eventId, note })
     })
       .then(result => {
         const ticket = result.ticket;
@@ -5211,7 +5223,7 @@
       e.preventDefault(); if(!validateForm()) return; submitBtn.disabled=true; submitBtn.textContent='Sending...'; status.textContent='Sending…';
       try{
         const payload = new FormData(form);
-        const resp = await fetch('/api/feedback', { method:'POST', body: payload });
+        const resp = await fetch('/kbec/api/feedback.php', { method:'POST', body: payload });
         if(!resp.ok){ const err = await resp.json().catch(()=>({message:'Server error'})); throw new Error(err.message||'Server error'); }
         const result = await resp.json(); status.textContent = 'Thanks — your feedback has been submitted.'; status.style.color = 'green'; localStorage.setItem(lastKey, String(Date.now())); form.reset(); setTimeout(()=>{ closeModal(); }, 1400);
       }catch(err){ status.textContent = err.message||'Submission failed'; status.style.color = '#b32'; }
@@ -5351,7 +5363,7 @@
 
     async function loadMemberSession() {
       try {
-        const result = await requestJson('/api/member/me');
+        const result = await requestJson('/kbec/api/me.php');
         renderDashboard(result.member);
       } catch (error) {
         clearDashboard();
@@ -5362,20 +5374,12 @@
       const url = new URL(window.location.href);
       const token = url.searchParams.get('verify');
       if (!token) return false;
-
-      try {
-        showStatus(signupStatus, 'Verifying your KUET email...', '');
-        const result = await requestJson(`/api/member/verify?token=${encodeURIComponent(token)}`);
-        renderDashboard(result.member);
-        showStatus(signupStatus, result.message || 'Email verified successfully.', 'success');
-        url.searchParams.delete('verify');
-        window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-        scrollToMembers();
-        return true;
-      } catch (error) {
-        showStatus(signupStatus, error.message || 'Verification failed.', 'error');
-        return false;
-      }
+      // Auto-verify is enabled — token-based verification is not needed.
+      // Just clean the URL and reload the member session.
+      url.searchParams.delete('verify');
+      window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+      await loadMemberSession();
+      return true;
     }
 
     tabButtons.forEach(button => {
@@ -5407,7 +5411,7 @@
       }
 
       try {
-        const result = await requestJson('/api/member/register', {
+        const result = await requestJson('/kbec/api/member_register.php', {
           method: 'POST',
           body: JSON.stringify({
             name: document.getElementById('memberName').value,
@@ -5444,7 +5448,7 @@
       }
 
       try {
-        const result = await requestJson('/api/member/login', {
+        const result = await requestJson('/kbec/api/member_login.php', {
           method: 'POST',
           body: JSON.stringify({
             email: loginEmailField.value,
@@ -5470,18 +5474,8 @@
         showStatus(loginStatus, 'Enter your KUET email first.', 'error');
         return;
       }
-
-      try {
-        const result = await requestJson('/api/member/resend-verification', {
-          method: 'POST',
-          body: JSON.stringify({ email })
-        });
-
-        const verificationLink = result.verificationLink ? ` <a href="${result.verificationLink}">Verify now</a>` : '';
-        showStatus(loginStatus, `${result.message || 'Verification link refreshed.'}${verificationLink}`, 'success');
-      } catch (error) {
-        showStatus(loginStatus, error.message || 'Could not resend verification.', 'error');
-      }
+      // Auto-verify is enabled on this system.
+      showStatus(loginStatus, 'This system uses auto-verification. Your account should already be active. Try logging in.', 'success');
     });
 
     profileForm.addEventListener('submit', async event => {
@@ -5495,7 +5489,7 @@
       }
 
       try {
-        const result = await requestJson('/api/member/profile', {
+        const result = await requestJson('/kbec/api/update_profile.php', {
           method: 'PUT',
           body: JSON.stringify({
             name: profileFields.name.value,
@@ -5516,7 +5510,7 @@
 
     memberLogoutBtn.addEventListener('click', async () => {
       try {
-        await requestJson('/api/member/logout', { method: 'POST' });
+        await requestJson('/kbec/api/member_logout.php', { method: 'POST' });
       } catch (error) {
         // Local UI still resets so the user can sign in again.
       }
