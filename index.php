@@ -23,9 +23,10 @@ try {
     $__sponsors      = $__db->query("SELECT * FROM sponsors WHERE is_active=1 ORDER BY sort_order ASC")->fetchAll();
     $__gallery       = $__db->query("SELECT * FROM gallery ORDER BY sort_order ASC, created_at DESC LIMIT 24")->fetchAll();
     $__opportunities = $__db->query("SELECT * FROM opportunities WHERE is_active=1 ORDER BY created_at DESC")->fetchAll();
+    $__resources     = $__db->query("SELECT * FROM resources WHERE is_active=1 ORDER BY sort_order ASC, created_at DESC")->fetchAll();
 } catch (Throwable $e) {
     $__S=[]; $S=fn($k,$d='')=>htmlspecialchars($d,ENT_QUOTES);
-    $__announcements=$__team=$__sponsors=$__gallery=$__opportunities=[];
+    $__announcements=$__team=$__sponsors=$__gallery=$__opportunities=$__resources=[];
 }
 
 $sponsorsList = array_filter($__sponsors, fn($s) => $s['category'] !== 'Partner');
@@ -2151,8 +2152,51 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
     }
     .resources-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 18px;
+    }
+    @media (max-width: 1200px) {
+      .resources-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    .youtube-card {
+      display: flex;
+      flex-direction: column;
+    }
+    .youtube-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+      width: 100%;
+    }
+    .yt-link-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(0, 102, 204, 0.04);
+      border: 1px solid rgba(0, 102, 204, 0.08);
+      border-radius: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+    }
+    .yt-link-item:hover {
+      background: rgba(255, 0, 0, 0.06);
+      border-color: rgba(255, 0, 0, 0.2);
+      transform: translateX(3px);
+    }
+    .yt-link-item svg.yt-play {
+      color: #ff0000;
+      flex-shrink: 0;
+      transition: transform 0.22s ease;
+    }
+    .yt-link-item:hover svg.yt-play {
+      transform: scale(1.18);
     }
     .resource-card {
       border: 1px solid rgba(0, 102, 204, 0.16);
@@ -3504,43 +3548,71 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
     </div>
 
     <div class="resources-grid">
-      <article class="resource-card">
-        <div class="resource-icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M6 4h9l3 3v13H6V4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9 12h6M9 16h6M9 8h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <h3>Presentation Slides</h3>
-        <p>Polished deck structures for pitches, case presentations, workshop recaps, and club showcase sessions.</p>
-        <div class="resource-tags"><span>Pitch decks</span><span>Templates</span><span>Editable</span></div>
-        <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Resource%20Request%20-%20Presentation%20Slides">Request Access</a></div>
-      </article>
+      <?php
+      // Filter resources into regular and YouTube links
+      $regular_resources = [];
+      $youtube_resources = [];
+      foreach ($__resources as $res) {
+          if ($res['category'] === 'youtube') {
+              $youtube_resources[] = $res;
+          } else {
+              $regular_resources[] = $res;
+          }
+      }
 
-      <article class="resource-card">
-        <div class="resource-icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M7 4h10v16H7z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M9 8h6M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <h3>Business Templates</h3>
-        <p>Ready-to-use formats for proposals, budgets, market research notes, and team planning documents.</p>
-        <div class="resource-tags"><span>Proposals</span><span>Reports</span><span>Planning</span></div>
-        <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Resource%20Request%20-%20Business%20Templates">Request Access</a></div>
-      </article>
+      // Icon SVG map per category
+      $resIcons = [
+          'template' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 4h9l3 3v13H6V4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 12h6M9 16h6M9 8h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+          'guide'    => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+          'tool'     => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+          'workshop' => '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+      ];
 
-      <article class="resource-card">
-        <div class="resource-icon" aria-hidden="true">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M12 3v18M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <h3>Startup Guides</h3>
-        <p>Practical guides that cover idea validation, launching a product, and organizing a student-led startup.</p>
-        <div class="resource-tags"><span>Launch</span><span>Validation</span><span>Founders</span></div>
-        <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Resource%20Request%20-%20Startup%20Guides">Request Access</a></div>
-      </article>
+      // Render regular resources
+      foreach ($regular_resources as $res):
+          $tags    = array_filter(array_map('trim', explode(',', $res['tags'] ?? '')));
+          $icon    = $resIcons[$res['category']] ?? $resIcons['template'];
+          $linkUrl = htmlspecialchars($res['link'] ?? '', ENT_QUOTES);
+      ?>
+        <article class="resource-card">
+          <div class="resource-icon" aria-hidden="true"><?= $icon ?></div>
+          <h3><?= htmlspecialchars($res['title'], ENT_QUOTES) ?></h3>
+          <p><?= htmlspecialchars($res['description'], ENT_QUOTES) ?></p>
+          <?php if ($tags): ?>
+          <div class="resource-tags"><?php foreach ($tags as $tag) echo '<span>' . htmlspecialchars($tag, ENT_QUOTES) . '</span>'; ?></div>
+          <?php endif; ?>
+          <?php if ($linkUrl): ?>
+          <div class="opportunity-actions"><a class="opportunity-link" href="<?= $linkUrl ?>">Request Access</a></div>
+          <?php endif; ?>
+        </article>
+      <?php endforeach; ?>
+
+      <?php
+      // Render the combined YouTube Links card if any are active
+      if (!empty($youtube_resources)):
+      ?>
+        <article class="resource-card youtube-card">
+          <div class="resource-icon" aria-hidden="true" style="color:#ff0000;background:rgba(255,0,0,0.1);border-color:rgba(255,0,0,0.2)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.11C19.518 3.5 12 3.5 12 3.5s-7.518 0-9.388.553a3.003 3.003 0 0 0-2.11 2.11C0 8.033 0 12 0 12s0 3.967.502 5.837a3.003 3.003 0 0 0 2.11 2.11c1.87.553 9.388.553 9.388.553s7.518 0 9.388-.553a3.003 3.003 0 0 0 2.11-2.11C24 15.967 24 12 24 12s0-3.967-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </div>
+          <h3>YouTube Links</h3>
+          <p>Access curated learning videos, lectures, and playlists covering core business and professional domains.</p>
+          
+          <div class="youtube-links-list">
+            <?php foreach ($youtube_resources as $yt): ?>
+              <a class="yt-link-item" href="<?= htmlspecialchars($yt['link'] ?? '', ENT_QUOTES) ?>" target="_blank" title="Watch <?= htmlspecialchars($yt['title'] ?? '', ENT_QUOTES) ?>">
+                <svg class="yt-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                <span style="flex-grow:1;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><?= htmlspecialchars($yt['title'], ENT_QUOTES) ?></span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-muted);opacity:0.7;flex-shrink:0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </article>
+      <?php endif; ?>
+
+      <?php if (empty($regular_resources) && empty($youtube_resources)): ?>
+        <p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:32px 0">No resources published yet. Check back soon!</p>
+      <?php endif; ?>
     </div>
   </div>
 </section>
@@ -3964,6 +4036,35 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
     return payload;
   }
 
+  function mapTicket(t) {
+    if (!t) return null;
+    const ticketCode = t.ticketCode || t.ticket_code || '';
+    const ticketToken = t.ticketToken || t.ticket_token || '';
+    const title = t.title || t.event_title || 'Event Ticket';
+    const venue = t.venue || t.location || t.venue || 'Venue';
+    const start = t.start || t.event_date_start || 'Date';
+    const type = t.type || 'Standard';
+    const checkInUrl = `${window.location.origin}/kbec/api/check_in.php?ticket=${ticketToken}`;
+    const qrDataUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkInUrl)}`;
+    
+    return {
+      id: t.id,
+      ticketCode,
+      ticketToken,
+      note: t.note,
+      registeredAt: t.registeredAt || t.registered_at,
+      attendedAt: t.attendedAt || t.attended_at,
+      title,
+      slug: t.slug,
+      type,
+      venue,
+      start,
+      end: t.end || t.event_date_end,
+      checkInUrl,
+      qrDataUrl
+    };
+  }
+
   function setEventTicketPanel(ticket) {
     if (!ticket) {
       eventTicketPanel.setAttribute('hidden', '');
@@ -4024,20 +4125,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
           }))
         : [...EVENT_SEED];
       MEMBER_EVENT_TICKETS = Array.isArray(payload.myTickets) 
-        ? payload.myTickets.map(t => ({
-            id: t.id,
-            ticketCode: t.ticket_code,
-            ticketToken: t.ticket_token,
-            note: t.note,
-            registeredAt: t.registered_at,
-            attendedAt: t.attended_at,
-            title: t.event_title,
-            slug: t.slug,
-            type: t.type,
-            venue: t.location || t.venue,
-            start: t.event_date_start || t.start,
-            end: t.event_date_end || t.end
-          }))
+        ? payload.myTickets.map(t => mapTicket(t))
         : [];
     } catch (error) {
       console.error('API load error, falling back to seed:', error);
@@ -4310,7 +4398,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
       })
     })
       .then(result => {
-        const ticket = result.ticket;
+        const ticket = mapTicket(result.ticket);
         eventFormStatus.innerHTML = `${result.message || 'Registration confirmed.'} ${ticket ? '<a href="#eventTicketPanel">View ticket</a>' : ''}`;
         eventFormStatus.className = 'event-form-status success';
         eventRegistrationForm.reset();
