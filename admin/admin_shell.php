@@ -24,6 +24,7 @@ function adminShellOpen(string $pageTitle = 'Admin', string $activeNav = 'dashbo
         'announcements' => ['Announcements',   'bi-megaphone',          'announcements.php'],
         'team'          => ['Executive Team',  'bi-people-fill',        'team.php'],
         'events'        => ['Events',          'bi-calendar-event-fill','events.php'],
+        'opportunities' => ['Opportunities',   'bi-briefcase-fill',     'opportunities.php'],
         'members'       => ['Members',         'bi-person-badge-fill',  'members.php'],
         'sponsors'      => ['Sponsors',        'bi-award-fill',         'sponsors.php'],
         'gallery'       => ['Gallery',         'bi-images',             'gallery.php'],

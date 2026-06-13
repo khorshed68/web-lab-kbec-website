@@ -22,9 +22,10 @@ try {
     $__team          = $__db->query("SELECT * FROM team_members WHERE is_active=1 ORDER BY position_order ASC, name ASC")->fetchAll();
     $__sponsors      = $__db->query("SELECT * FROM sponsors WHERE is_active=1 ORDER BY sort_order ASC")->fetchAll();
     $__gallery       = $__db->query("SELECT * FROM gallery ORDER BY sort_order ASC, created_at DESC LIMIT 24")->fetchAll();
+    $__opportunities = $__db->query("SELECT * FROM opportunities WHERE is_active=1 ORDER BY created_at DESC")->fetchAll();
 } catch (Throwable $e) {
     $__S=[]; $S=fn($k,$d='')=>htmlspecialchars($d,ENT_QUOTES);
-    $__announcements=$__team=$__sponsors=$__gallery=[];
+    $__announcements=$__team=$__sponsors=$__gallery=$__opportunities=[];
 }
 
 $sponsorsList = array_filter($__sponsors, fn($s) => $s['category'] !== 'Partner');
@@ -3442,37 +3443,34 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
         </div>
 
         <div class="opportunity-grid">
-          <article class="opportunity-card" data-category="internship">
-            <div class="opportunity-top"><span class="opportunity-type">Internship</span><span class="opportunity-deadline">Apply by Jun 2</span></div>
-            <h3>Product Design Intern - Nova Labs</h3>
-            <p>Work on real product flows, user research, and design systems with a fast-moving startup team.</p>
-            <div class="opportunity-meta"><span>Remote / Hybrid</span><span>Paid</span><span>3 months</span></div>
-            <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Internship%20Opportunity%20-%20Nova%20Labs">Apply</a></div>
-          </article>
-
-          <article class="opportunity-card" data-category="startup">
-            <div class="opportunity-top"><span class="opportunity-type">Startup Hiring</span><span class="opportunity-deadline">Open now</span></div>
-            <h3>Growth Associate - FinTech Foundry</h3>
-            <p>Join an early-stage fintech startup to support outreach, customer growth, and founder operations.</p>
-            <div class="opportunity-meta"><span>Full-time</span><span>Dhaka</span><span>Startup</span></div>
-            <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Startup%20Hiring%20-%20FinTech%20Foundry">Apply</a></div>
-          </article>
-
-          <article class="opportunity-card" data-category="competition">
-            <div class="opportunity-top"><span class="opportunity-type">Case Competition</span><span class="opportunity-deadline">Register by Jun 18</span></div>
-            <h3>National Strategy Sprint 2026</h3>
-            <p>Compete in a business case challenge focused on market entry, pricing strategy, and presentation.</p>
-            <div class="opportunity-meta"><span>Team of 3-4</span><span>Prize Pool</span><span>Online rounds</span></div>
-            <div class="opportunity-actions"><a class="opportunity-link" href="#events">See Events</a><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Case%20Competition%20-%20National%20Strategy%20Sprint%202026">Apply</a></div>
-          </article>
-
-          <article class="opportunity-card" data-category="scholarship">
-            <div class="opportunity-top"><span class="opportunity-type">Scholarship</span><span class="opportunity-deadline">Deadline Jul 5</span></div>
-            <h3>Future Leaders Scholarship</h3>
-            <p>Merit-based scholarship for students with leadership experience, academic performance, and community impact.</p>
-            <div class="opportunity-meta"><span>Undergraduate</span><span>Partial funding</span><span>Essay required</span></div>
-            <div class="opportunity-actions"><a class="opportunity-link" href="mailto:bec@kuet.ac.bd?subject=Scholarship%20Opportunity%20-%20Future%20Leaders%20Scholarship">Apply</a></div>
-          </article>
+          <?php foreach ($__opportunities as $o): 
+            $catLabel = [
+                'internship' => 'Internship',
+                'startup' => 'Startup Hiring',
+                'competition' => 'Case Competition',
+                'scholarship' => 'Scholarship'
+            ][$o['category']] ?? 'Opportunity';
+          ?>
+            <article class="opportunity-card" data-category="<?= htmlspecialchars($o['category'], ENT_QUOTES) ?>">
+              <div class="opportunity-top">
+                <span class="opportunity-type"><?= htmlspecialchars($catLabel, ENT_QUOTES) ?></span>
+                <span class="opportunity-deadline"><?= htmlspecialchars($o['deadline'], ENT_QUOTES) ?></span>
+              </div>
+              <h3><?= htmlspecialchars($o['title'], ENT_QUOTES) ?></h3>
+              <p><?= htmlspecialchars($o['description'], ENT_QUOTES) ?></p>
+              <div class="opportunity-meta">
+                <span><?= htmlspecialchars($o['meta_1'], ENT_QUOTES) ?></span>
+                <span><?= htmlspecialchars($o['meta_2'], ENT_QUOTES) ?></span>
+                <span><?= htmlspecialchars($o['meta_3'], ENT_QUOTES) ?></span>
+              </div>
+              <div class="opportunity-actions">
+                <?php if ($o['category'] === 'competition'): ?>
+                  <a class="opportunity-link" href="#events">See Events</a>
+                <?php endif; ?>
+                <a class="opportunity-link" href="<?= htmlspecialchars($o['link'], ENT_QUOTES) ?>">Apply</a>
+              </div>
+            </article>
+          <?php endforeach; ?>
         </div>
       </div>
 
