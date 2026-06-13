@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'create' || $action === 'edit') {
         $name       = trim($_POST['name'] ?? '');
         $website    = trim($_POST['website'] ?? '');
-        $category   = in_array($_POST['category'],['Title','Gold','Silver','Media','General'])?$_POST['category']:'General';
+        $category   = in_array($_POST['category'],['Title','Gold','Silver','Media','General','Partner'])?$_POST['category']:'General';
         $sort_order = (int)($_POST['sort_order'] ?? 99);
         $is_active  = isset($_POST['is_active']) ? 1 : 0;
 
@@ -84,7 +84,7 @@ adminShellOpen('Sponsors & Partners', 'sponsors');
       <div class="col-md-3">
         <label class="ap-label">Category / Tier</label>
         <select name="category" class="ap-input">
-          <?php foreach(['Title','Gold','Silver','Media','General'] as $c): ?>
+          <?php foreach(['Title','Gold','Silver','Media','General','Partner'] as $c): ?>
             <option value="<?= $c ?>" <?= ($editRow['category']??'')===$c?'selected':'' ?>><?= $c ?></option>
           <?php endforeach; ?>
         </select>
@@ -120,7 +120,7 @@ adminShellOpen('Sponsors & Partners', 'sponsors');
 <?php endif; ?>
 
 <?php
-$categories = ['Title','Gold','Silver','Media','General'];
+$categories = ['Title','Gold','Silver','Media','General','Partner'];
 foreach ($categories as $cat):
   $catSponsors = array_filter($sponsors, fn($s) => $s['category'] === $cat);
   if (empty($catSponsors)) continue;

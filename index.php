@@ -26,6 +26,9 @@ try {
     $__S=[]; $S=fn($k,$d='')=>htmlspecialchars($d,ENT_QUOTES);
     $__announcements=$__team=$__sponsors=$__gallery=[];
 }
+
+$sponsorsList = array_filter($__sponsors, fn($s) => $s['category'] !== 'Partner');
+$partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner');
 ?>
 
 <!DOCTYPE html>
@@ -201,6 +204,14 @@ try {
     .nav-cta-admin:hover {
       background: #c9a84c !important;
       color: #060810 !important;
+    }
+    .nav-cta-announcements {
+      border-color: #27ae60;
+      color: #27ae60 !important;
+    }
+    .nav-cta-announcements:hover {
+      background: #27ae60 !important;
+      color: #fff !important;
     }
 
     /* Mobile hamburger */
@@ -838,11 +849,37 @@ try {
       margin: 0 auto;
     }
 
+    /* ═══════════════════════════════════════════════════════
+       UPCOMING EVENTS — Calendar + Milestones Panel
+    ════════════════════════════════════════════════════════ */
+    #events {
+      padding: 100px 48px 120px;
+      background:
+        radial-gradient(circle at 8% 20%, rgba(0,102,204,.05) 0%, transparent 46%),
+        radial-gradient(circle at 90% 80%, rgba(0,102,204,.04) 0%, transparent 40%),
+        #f5f7fa;
+    }
+    .events-wrap { max-width: 1220px; margin: 0 auto; }
+    .events-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .events-eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
     .events-title {
       font-family: 'Cinzel', serif;
       font-size: clamp(36px, 4.2vw, 58px);
       line-height: 1.08;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       color: var(--text);
     }
     .events-subtitle {
@@ -909,7 +946,7 @@ try {
     }
     .calendar-panel {
       padding: 18px;
-      overflow: hidden;
+      overflow: visible;
     }
     .calendar-toolbar {
       display: flex;
@@ -1354,6 +1391,40 @@ try {
       color: #2e7d32;
     }
 
+    @media (max-width: 600px) {
+      .calendar-badge {
+        padding: 0 !important;
+        width: 8px !important;
+        height: 8px !important;
+        border-radius: 50% !important;
+        font-size: 0 !important;
+        color: transparent !important;
+        overflow: hidden !important;
+        border: none !important;
+      }
+      .calendar-cell,
+      .calendar-empty {
+        min-height: 48px !important;
+        padding: 4px !important;
+        border-radius: 8px !important;
+      }
+      .calendar-day-number {
+        width: 22px !important;
+        height: 22px !important;
+        font-size: 10px !important;
+        margin-bottom: 2px !important;
+      }
+      .calendar-badges {
+        gap: 3px !important;
+        justify-content: center !important;
+      }
+      .calendar-cell.is-today::before {
+        inset: 4px 4px auto auto !important;
+        width: 6px !important;
+        height: 6px !important;
+      }
+    }
+
     /* ── OPPORTUNITY BOARD ── */
     #opportunities {
       position: relative;
@@ -1746,10 +1817,11 @@ try {
       background: #c9a84c;
       opacity: 0.5;
     }
-    /* Cards in a row – grid auto-fills, targeting 7-8 per row */
+    /* Cards in a row – flexbox layout centered */
     .position-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 14px;
       width: 100%;
       max-width: 1280px;
@@ -1758,6 +1830,8 @@ try {
     .member-card {
       position: relative;
       width: 100%;
+      max-width: 168px;
+      flex-shrink: 0;
       background: linear-gradient(160deg, #141926 0%, #0d1320 60%, #0a1018 100%);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 14px;
@@ -2632,16 +2706,10 @@ try {
         flex-direction: row;
         align-items: center;
       }
-      .events-list { padding-left: 42px; }
-      .event-node {
-        left: -42px;
-        width: 24px;
-        height: 24px;
+      .events-layout {
+        grid-template-columns: 1fr;
       }
-      .event-item::after {
-        left: -34px;
-        width: 14px;
-      }
+      .calendar-panel { padding-right: 0; }
       .event-registration-grid { grid-template-columns: 1fr; }
       #achievements { padding: 88px 24px 94px; }
       .achievements-grid {
@@ -2697,18 +2765,6 @@ try {
         padding: 7px 12px;
         font-size: 10px;
       }
-      .events-list {
-        padding-left: 0;
-        gap: 22px;
-      }
-      .events-list::before { display: none; }
-      .event-item::after { display: none; }
-      .event-node {
-        position: static;
-        margin-bottom: 10px;
-      }
-      .event-card { padding: 14px 14px 12px; }
-      .event-title { font-size: clamp(20px, 7vw, 26px); }
       .event-register-btn {
         width: 100%;
         justify-content: center;
@@ -2770,6 +2826,143 @@ try {
       .footer-wrap { grid-template-columns: 1fr; }
       .footer-bottom { text-align:left; }
     }
+
+    /* Announcements Modal Backdrop */
+    .ann-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 16, 0.72);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1400; /* overlay team modal */
+      padding: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .ann-modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ann-modal {
+      width: min(640px, 100%);
+      max-height: 85vh;
+      overflow: auto;
+      background: linear-gradient(155deg, #141926, #0a0d14);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.15);
+      border: 1px solid rgba(255,255,255,0.07);
+      position: relative;
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+    }
+    .ann-modal-backdrop.open .ann-modal {
+      transform: translateY(0);
+    }
+    .ann-modal::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 3px;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      background: linear-gradient(90deg, #27ae60, #0066cc, #27ae60);
+    }
+    .ann-modal h3 {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(22px, 2.5vw, 30px);
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-align: center;
+    }
+    .ann-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ann-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+      text-align: left;
+    }
+    .ann-item-type {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .ann-item-type.info { background: rgba(52, 152, 219, 0.12); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.25); }
+    .ann-item-type.warning { background: rgba(243, 156, 18, 0.12); color: #f39c12; border: 1px solid rgba(243, 156, 18, 0.25); }
+    .ann-item-type.success { background: rgba(39, 174, 96, 0.12); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.25); }
+    .ann-item-type.urgent { background: rgba(231, 76, 60, 0.12); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.25); }
+
+    .ann-item h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .ann-item p {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13.5px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .ann-item-date {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+    }
+    .ann-item-cta {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 7px 15px;
+      border-radius: 6px;
+      margin-top: 4px;
+      transition: opacity 0.2s;
+    }
+    .ann-item-cta:hover {
+      opacity: 0.9;
+      color: #fff !important;
+    }
+    .ann-modal .close-btn {
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      font-size: 20px;
+      cursor: pointer;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .ann-modal .close-btn:hover {
+      background: rgba(39, 174, 96, 0.15);
+      color: #27ae60;
+    }
   </style>
 </head>
 <body>
@@ -2802,6 +2995,7 @@ try {
     <li><a href="#resources">Resources</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
     <li><a href="#members">Members</a></li>
+    <li><a href="#" class="nav-cta nav-cta-announcements" id="navAnnBtn">New Announcements</a></li>
     <li><a href="admin/login.php" class="nav-cta nav-cta-admin">Admin</a></li>
     <li><a href="#join" class="nav-cta">Join Us</a></li>
   </ul>
@@ -2821,6 +3015,7 @@ try {
   <a href="#resources">Resources</a>
   <a href="#sponsors">Sponsors</a>
   <a href="#members">Members</a>
+  <a href="#" id="mobileNavAnnBtn">New Announcements</a>
   <a href="admin/login.php">Admin</a>
   <a href="#join">Join Us</a>
 </div>
@@ -2985,590 +3180,6 @@ try {
   </div>
 </section>
 
-<!-- JOIN US -->
-<section id="join">
-  <div class="join-wrap">
-    <p class="join-eyebrow">Why Join Us</p>
-    <h2 class="join-title">Where Engineers Think Like Entrepreneurs</h2>
-    <p class="join-copy">
-      At KBEC KUET, we bridge the gap between technical expertise and business strategy. Whether you are an aspiring startup founder or a corporate leader in the making, this is your launchpad.
-    </p>
-
-    <div class="join-cards">
-      <article class="join-card">
-        <div class="join-card-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path d="M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM8 14a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm8 7v-2a4 4 0 0 0-4-4h-1m9 6v-2a4 4 0 0 0-3-3.87M4 21v-2a4 4 0 0 1 4-4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <h3>Mentorship Program</h3>
-        <p>1-on-1 guidance from industry veterans, startup founders, and successful alumni.</p>
-      </article>
-
-      <article class="join-card">
-        <div class="join-card-icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
-            <path d="M3 12h18M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <h3>National Competitions</h3>
-        <p>Represent KUET in top-tier business case competitions and innovation contests nationwide.</p>
-      </article>
-    </div>
-
-    <button type="button" class="register-trigger" id="openRegistrationBtn" aria-controls="registrationPanel" aria-expanded="false">
-      Register Now
-    </button>
-
-    <div class="registration-panel" id="registrationPanel" hidden>
-      <div class="registration-head">
-        <h3>KBEC Registration Form</h3>
-        <p>Fill out the form below. You will get instant confirmation on this page after submitting.</p>
-      </div>
-
-      <form id="registrationForm" class="registration-form" novalidate>
-        <div class="registration-grid">
-          <div class="registration-field">
-            <label for="regName">Full Name</label>
-            <input type="text" id="regName" name="name" required />
-          </div>
-          <div class="registration-field">
-            <label for="regEmail">Email</label>
-            <input type="email" id="regEmail" name="email" required />
-          </div>
-          <div class="registration-field">
-            <label for="regId">Student ID</label>
-            <input type="text" id="regId" name="studentId" required />
-          </div>
-          <div class="registration-field">
-            <label for="regDepartment">Department</label>
-            <input type="text" id="regDepartment" name="department" list="departmentSuggestions" placeholder="Start typing your department" required />
-            <datalist id="departmentSuggestions">
-              <option value="Architecture" />
-              <option value="Biomedical Engineering" />
-              <option value="Building Engineering and Construction Management" />
-              <option value="Chemical Engineering" />
-              <option value="Civil Engineering" />
-              <option value="Computer Science and Engineering" />
-              <option value="Electrical and Electronic Engineering" />
-              <option value="Electronics and Communication Engineering" />
-              <option value="Energy Science and Engineering" />
-              <option value="Industrial Engineering and Management" />
-              <option value="Leather Engineering" />
-              <option value="Materials Science and Engineering" />
-              <option value="Mechanical Engineering" />
-              <option value="Mechatronics Engineering" />
-              <option value="Textile Engineering" />
-              <option value="Urban and Regional Planning" />
-            </datalist>
-          </div>
-          <div class="registration-field">
-            <label for="regBatch">Batch</label>
-            <input type="text" id="regBatch" name="batch" required />
-          </div>
-          <div class="registration-field">
-            <label for="regInterest">Interest Area</label>
-            <select id="regInterest" name="interest" required>
-              <option value="">Select one</option>
-              <option value="case-competition">Case Competition</option>
-              <option value="startup">Startup & Innovation</option>
-              <option value="marketing">Marketing</option>
-              <option value="operations">Operations</option>
-              <option value="finance">Finance</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="registration-field">
-          <label for="regMessage">Why do you want to join?</label>
-          <textarea id="regMessage" name="message" placeholder="Tell us about your goals (optional)"></textarea>
-        </div>
-
-        <div class="registration-actions">
-          <button type="submit" class="register-submit">Submit Registration</button>
-          <p class="form-status" id="formStatus" aria-live="polite"></p>
-        </div>
-      </form>
-    </div>
-  </div>
-</section>
-
-<!-- MEMBER PORTAL -->
-<style id="member-portal-styles">
-  #members {
-    position: relative;
-    padding: 110px 48px 120px;
-    background:
-      radial-gradient(circle at 15% 10%, rgba(0, 102, 204, 0.08), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(201, 168, 76, 0.08), transparent 34%),
-      var(--bg-secondary);
-    border-top: 1px solid rgba(0, 102, 204, 0.1);
-    border-bottom: 1px solid rgba(0, 102, 204, 0.08);
-  }
-  .members-wrap {
-    max-width: 1180px;
-    margin: 0 auto;
-  }
-  .members-head {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 28px;
-  }
-  .members-eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    font-size: 10px;
-    font-weight: 600;
-    margin-bottom: 14px;
-    justify-content: center;
-  }
-  .members-eyebrow::before {
-    content: '';
-    width: 36px;
-    height: 1px;
-    background: var(--accent);
-  }
-  .members-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(34px, 4.3vw, 56px);
-    line-height: 1.08;
-    max-width: 900px;
-    margin: 0 auto 12px;
-    text-align: center;
-    color: var(--text);
-  }
-  .members-copy {
-    max-width: 650px;
-    color: var(--text-muted);
-    font-size: 15px;
-    line-height: 1.8;
-  }
-  .members-badge {
-    border: 1px solid rgba(0, 102, 204, 0.18);
-    background: rgba(0, 102, 204, 0.06);
-    color: var(--accent-light);
-    border-radius: 999px;
-    padding: 10px 14px;
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-  .members-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(330px, 0.92fr);
-    gap: 24px;
-    align-items: start;
-  }
-  .members-card {
-    border: 1px solid rgba(0, 102, 204, 0.16);
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.84);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 18px 36px rgba(0, 102, 204, 0.06);
-  }
-  .members-auth-card {
-    padding: 22px;
-  }
-  .member-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  .member-tab {
-    border: 1px solid rgba(0, 102, 204, 0.16);
-    border-radius: 999px;
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.9);
-    color: rgba(26, 26, 26, 0.7);
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  }
-  .member-tab:hover,
-  .member-tab.is-active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-    transform: translateY(-1px);
-  }
-  .member-panel {
-    display: none;
-  }
-  .member-panel.is-active {
-    display: block;
-  }
-  .member-panel h3,
-  .member-dashboard-title {
-    font-family: 'Cinzel', serif;
-    color: var(--text);
-    line-height: 1.1;
-  }
-  .member-panel h3 {
-    font-size: clamp(22px, 2vw, 30px);
-    margin-bottom: 8px;
-  }
-  .member-panel p,
-  .member-dashboard-copy {
-    color: var(--text-muted);
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .member-form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-    margin-top: 18px;
-  }
-  .member-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .member-field.member-span-2 {
-    grid-column: 1 / -1;
-  }
-  .member-field label {
-    color: rgba(26, 26, 26, 0.72);
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-  .member-field input,
-  .member-field select,
-  .member-field textarea {
-    width: 100%;
-    border: 1px solid rgba(0, 102, 204, 0.24);
-    border-radius: 10px;
-    background: white;
-    color: var(--text);
-    padding: 12px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  .member-field textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  .member-field input:focus,
-  .member-field select:focus,
-  .member-field textarea:focus {
-    border-color: rgba(0, 102, 204, 0.62);
-    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
-  }
-  .member-actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  .member-submit,
-  .member-secondary,
-  .member-logout {
-    border-radius: 10px;
-    border: 1px solid var(--accent);
-    background: var(--accent);
-    color: white;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-weight: 600;
-    cursor: pointer;
-    padding: 12px 18px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-  }
-  .member-submit:hover,
-  .member-secondary:hover,
-  .member-logout:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(0, 102, 204, 0.24);
-  }
-  .member-secondary {
-    background: rgba(0, 102, 204, 0.08);
-    color: var(--accent-light);
-    border-color: rgba(0, 102, 204, 0.28);
-  }
-  .member-logout {
-    background: white;
-    color: var(--accent);
-    border-color: rgba(0, 102, 204, 0.24);
-  }
-  .member-status {
-    color: rgba(26, 26, 26, 0.58);
-    font-size: 13px;
-    line-height: 1.6;
-    min-height: 1.4em;
-  }
-  .member-status.error { color: #d32f2f; }
-  .member-status.success { color: #2e7d32; }
-  .member-help {
-    margin-top: 16px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 102, 204, 0.12);
-    background: rgba(0, 102, 204, 0.04);
-    color: var(--text-muted);
-    font-size: 13px;
-    line-height: 1.7;
-  }
-  .member-dashboard-card {
-    padding: 22px;
-  }
-  .member-dashboard-empty,
-  .member-dashboard-view {
-    display: grid;
-    gap: 16px;
-  }
-  .member-dashboard-empty {
-    padding: 10px 2px;
-  }
-  .member-dashboard-empty h3 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(24px, 2.2vw, 32px);
-    color: var(--text);
-    line-height: 1.1;
-  }
-  .member-summary-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-  .member-summary-card {
-    border: 1px solid rgba(0, 102, 204, 0.12);
-    background: rgba(255, 255, 255, 0.94);
-    border-radius: 14px;
-    padding: 14px;
-  }
-  .member-summary-card span {
-    display: block;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    font-size: 10px;
-    color: rgba(26, 26, 26, 0.54);
-    margin-bottom: 6px;
-  }
-  .member-summary-card strong {
-    color: var(--text);
-    font-size: 15px;
-    line-height: 1.4;
-  }
-  .member-profile-form {
-    display: grid;
-    gap: 14px;
-    margin-top: 8px;
-  }
-  .member-profile-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-  }
-  @media (max-width: 1000px) {
-    #members { padding: 88px 24px; }
-    .members-head,
-    .members-layout { grid-template-columns: 1fr; }
-    .members-head { display: grid; }
-    .members-badge { justify-self: start; }
-  }
-  @media (max-width: 720px) {
-    .member-form-grid,
-    .member-summary-grid { grid-template-columns: 1fr; }
-    .members-auth-card,
-    .member-dashboard-card { padding: 18px; }
-  }
-</style>
-
-<section id="members">
-  <div class="members-wrap">
-    <div class="members-head">
-      <div style="text-align:center">
-        <p class="members-eyebrow">Member Portal</p>
-        <h2 class="members-title">Register with your KUET email, verify,<br>then manage your club profile</h2>
-        <p class="members-copy" style="margin:0 auto">This portal gives every member one secure account for signup, login, profile updates, and dashboard access.</p>
-      </div>
-      <div class="members-badge">KUET Email Required</div>
-    </div>
-
-    <div class="members-layout">
-      <div class="members-card members-auth-card">
-        <div class="member-tabs" role="tablist" aria-label="Member account options">
-          <button type="button" class="member-tab is-active" data-member-tab="signup" aria-selected="true">Sign Up</button>
-          <button type="button" class="member-tab" data-member-tab="login" aria-selected="false">Login</button>
-        </div>
-
-        <form id="memberSignupForm" class="member-panel is-active" novalidate>
-          <h3>Create Account</h3>
-          <p>Use your KUET email to create a verified member profile.</p>
-
-          <div class="member-form-grid">
-            <div class="member-field">
-              <label for="memberName">Full Name</label>
-              <input id="memberName" name="name" type="text" required>
-            </div>
-            <div class="member-field">
-              <label for="memberStudentId">Student ID</label>
-              <input id="memberStudentId" name="studentId" type="text" required>
-            </div>
-            <div class="member-field">
-              <label for="memberEmail">KUET Email</label>
-              <input id="memberEmail" name="email" type="email" placeholder="name@kuet.ac.bd" required>
-            </div>
-            <div class="member-field">
-              <label for="memberDepartment">Department</label>
-              <input id="memberDepartment" name="department" type="text" list="departmentSuggestions" required>
-            </div>
-            <div class="member-field">
-              <label for="memberBatch">Batch</label>
-              <input id="memberBatch" name="batch" type="text" required>
-            </div>
-            <div class="member-field">
-              <label for="memberPhone">Phone</label>
-              <input id="memberPhone" name="phone" type="tel" placeholder="Optional">
-            </div>
-            <div class="member-field">
-              <label for="memberInterest">Interest Area</label>
-              <select id="memberInterest" name="interest" required>
-                <option value="">Select one</option>
-                <option value="case-competition">Case Competition</option>
-                <option value="startup">Startup & Innovation</option>
-                <option value="marketing">Marketing</option>
-                <option value="operations">Operations</option>
-                <option value="finance">Finance</option>
-              </select>
-            </div>
-            <div class="member-field">
-              <label for="memberPassword">Password</label>
-              <input id="memberPassword" name="password" type="password" minlength="8" required>
-            </div>
-            <div class="member-field member-span-2">
-              <label for="memberConfirmPassword">Confirm Password</label>
-              <input id="memberConfirmPassword" name="confirmPassword" type="password" minlength="8" required>
-            </div>
-            <div class="member-field member-span-2">
-              <label for="memberBio">Profile Note</label>
-              <textarea id="memberBio" name="bio" placeholder="Tell us a bit about your goals"></textarea>
-            </div>
-          </div>
-
-          <div class="member-actions">
-            <button type="submit" class="member-submit">Create Account</button>
-            <p class="member-status" id="memberSignupStatus" aria-live="polite"></p>
-          </div>
-
-          <div class="member-help">After signup, open the verification link sent to your KUET email. On local development, the link is also shown here so you can test the flow immediately.</div>
-        </form>
-
-        <form id="memberLoginForm" class="member-panel" novalidate hidden>
-          <h3>Login</h3>
-          <p>Sign in with the same KUET email and password you used to register.</p>
-
-          <div class="member-form-grid">
-            <div class="member-field member-span-2">
-              <label for="loginEmail">KUET Email</label>
-              <input id="loginEmail" name="email" type="email" required>
-            </div>
-            <div class="member-field member-span-2">
-              <label for="loginPassword">Password</label>
-              <input id="loginPassword" name="password" type="password" required>
-            </div>
-          </div>
-
-          <div class="member-actions">
-            <button type="submit" class="member-submit">Login</button>
-            <button type="button" class="member-secondary" id="resendVerificationBtn">Resend Verification</button>
-            <p class="member-status" id="memberLoginStatus" aria-live="polite"></p>
-          </div>
-
-          <div class="member-help">If you cannot find the verification email, use the resend button after entering your KUET email.</div>
-        </form>
-      </div>
-
-      <div class="members-card member-dashboard-card">
-        <div id="memberDashboardEmpty" class="member-dashboard-empty">
-          <p class="members-eyebrow">Dashboard</p>
-          <h3>Nothing to show yet</h3>
-          <p class="member-dashboard-copy">Create and verify your account first. Once you log in, you can edit your profile and see your club status here.</p>
-        </div>
-
-        <div id="memberDashboardView" class="member-dashboard-view" hidden>
-          <div>
-            <p class="members-eyebrow">Welcome back</p>
-            <h3 class="member-dashboard-title" id="dashboardName">Member</h3>
-            <p class="member-dashboard-copy" id="dashboardMeta">Your verified member profile is ready.</p>
-          </div>
-
-          <div class="member-summary-grid">
-            <div class="member-summary-card"><span>Member Code</span><strong id="dashboardMemberCode">-</strong></div>
-            <div class="member-summary-card"><span>Verification</span><strong id="dashboardVerification">-</strong></div>
-            <div class="member-summary-card"><span>KUET Email</span><strong id="dashboardEmail">-</strong></div>
-            <div class="member-summary-card"><span>Joined</span><strong id="dashboardJoined">-</strong></div>
-          </div>
-
-          <form id="memberProfileForm" class="member-profile-form" novalidate>
-            <div class="member-form-grid">
-              <div class="member-field">
-                <label for="profileName">Full Name</label>
-                <input id="profileName" name="name" type="text" required>
-              </div>
-              <div class="member-field">
-                <label for="profilePhone">Phone</label>
-                <input id="profilePhone" name="phone" type="tel">
-              </div>
-              <div class="member-field">
-                <label for="profileDepartment">Department</label>
-                <input id="profileDepartment" name="department" type="text" list="departmentSuggestions" required>
-              </div>
-              <div class="member-field">
-                <label for="profileBatch">Batch</label>
-                <input id="profileBatch" name="batch" type="text" required>
-              </div>
-              <div class="member-field member-span-2">
-                <label for="profileInterest">Interest Area</label>
-                <select id="profileInterest" name="interest" required>
-                  <option value="">Select one</option>
-                  <option value="case-competition">Case Competition</option>
-                  <option value="startup">Startup & Innovation</option>
-                  <option value="marketing">Marketing</option>
-                  <option value="operations">Operations</option>
-                  <option value="finance">Finance</option>
-                </select>
-              </div>
-              <div class="member-field member-span-2">
-                <label for="profileBio">Profile Bio</label>
-                <textarea id="profileBio" name="bio"></textarea>
-              </div>
-            </div>
-
-            <div class="member-profile-actions">
-              <button type="submit" class="member-submit">Update Profile</button>
-              <button type="button" class="member-logout" id="memberLogoutBtn">Logout</button>
-              <p class="member-status" id="memberProfileStatus" aria-live="polite"></p>
-            </div>
-          </form>
-
-          <div class="member-help" style="margin-top:4px">Your registered event tickets and attendance status will appear below after you enroll in an event.</div>
-          <div id="memberTicketList" class="member-ticket-list"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- UPCOMING EVENTS -->
 <section id="events">
   <div class="events-wrap">
@@ -3587,14 +3198,15 @@ try {
     </div>
 
     <div class="events-layout">
+      <!-- LEFT: Calendar -->
       <div class="calendar-panel">
         <div class="calendar-toolbar">
-          <button type="button" class="calendar-nav" id="calendarPrevBtn" aria-label="Previous month">‹</button>
+          <button type="button" class="calendar-nav" id="calendarPrevBtn" aria-label="Previous month">&#8249;</button>
           <div class="calendar-toolbar-copy">
-            <p class="calendar-kicker">Monthly View</p>
-            <h3 class="calendar-month-title" id="calendarMonthLabel">May 2026</h3>
+            <span class="calendar-kicker">Monthly View</span>
+            <h3 class="calendar-month-title" id="calendarMonthLabel">June 2026</h3>
           </div>
-          <button type="button" class="calendar-nav" id="calendarNextBtn" aria-label="Next month">›</button>
+          <button type="button" class="calendar-nav" id="calendarNextBtn" aria-label="Next month">&#8250;</button>
         </div>
 
         <div class="calendar-weekdays" aria-hidden="true">
@@ -3610,23 +3222,27 @@ try {
         <div class="calendar-grid" id="calendarGrid" aria-live="polite"></div>
       </div>
 
+      <!-- RIGHT: Next Milestones -->
       <aside class="deadlines-panel">
-        <p class="deadlines-kicker">Upcoming Deadlines</p>
-        <h3>Next milestones</h3>
+        <span class="deadlines-kicker">Upcoming Deadlines</span>
+        <h3>Next Milestones</h3>
         <p>Registration cutoffs and event dates are highlighted here so members can plan ahead.</p>
 
         <div class="deadline-list" id="deadlineList"></div>
 
         <div class="deadline-spotlight" id="deadlineSpotlight">
-          <p class="spotlight-label">Selected date</p>
-          <h4 id="selectedDateLabel">May 16, 2026</h4>
-          <div class="deadline-spotlight-list" id="selectedDateEvents"></div>
+          <span class="spotlight-label">Selected Date</span>
+          <h4 id="selectedDateLabel">June 12, 2026</h4>
+          <div class="deadline-spotlight-list" id="selectedDateEvents">
+            <div class="deadline-spotlight-item">No events or deadlines fall on this date. Pick another day to inspect the calendar.</div>
+          </div>
         </div>
       </aside>
     </div>
 
+    <!-- Event Registration Form (opens below) -->
     <div class="event-registration-panel" id="eventRegistrationPanel" hidden>
-      <h3>Upcoming Event Registration</h3>
+      <h3>Event Registration</h3>
       <p>Select your event and submit your information to reserve your seat.</p>
 
       <form id="eventRegistrationForm" class="event-registration-form" novalidate>
@@ -3641,40 +3257,33 @@ try {
               <option value="KBEC Entrepreneurship Summit 2026">KBEC Entrepreneurship Summit 2026</option>
             </select>
           </div>
-
           <div class="event-field">
             <label for="eventRegName">Full Name</label>
             <input type="text" id="eventRegName" name="name" required />
           </div>
-
           <div class="event-field">
             <label for="eventRegEmail">Email</label>
             <input type="email" id="eventRegEmail" name="email" required />
           </div>
-
           <div class="event-field">
             <label for="eventRegPhone">Phone Number</label>
             <input type="tel" id="eventRegPhone" name="phone" required />
           </div>
-
           <div class="event-field">
             <label for="eventRegDept">Department</label>
             <input type="text" id="eventRegDept" name="department" list="departmentSuggestions" required />
           </div>
-
           <div class="event-field">
             <label for="eventRegBatch">Batch</label>
             <input type="text" id="eventRegBatch" name="batch" required />
           </div>
         </div>
-
         <div class="event-field">
           <label for="eventRegNote">Message (Optional)</label>
           <textarea id="eventRegNote" name="note" placeholder="Anything you'd like the organizers to know"></textarea>
         </div>
-
         <div class="event-registration-actions">
-          <button type="submit" class="event-submit">Submit Event Registration</button>
+          <button type="submit" class="event-submit">Submit Registration</button>
           <p class="event-form-status" id="eventFormStatus" aria-live="polite"></p>
         </div>
       </form>
@@ -3710,36 +3319,11 @@ try {
     </div>
 
     <div class="gallery-grid">
-      <!-- Large featured image - striking opening -->
-      <article class="gallery-item large">
-        <img src="assets/tedx-kuet.jpg" alt="TEDx KUET — stage lighting" loading="lazy" />
-      </article>
-
-      <!-- Regular gallery items - organized flow -->
-      <article class="gallery-item">
-        <img src="assets/group-photo.jpg" alt="KBEC group gathering" loading="lazy" />
-      </article>
-
-      <article class="gallery-item">
-        <img src="assets/clubfairdec.jpg" alt="Club fair display wall" loading="lazy" />
-      </article>
-
-      <!-- Large 2-column accent item - visual interest midway -->
-      <article class="gallery-item large">
-        <img src="assets/kbecnuxus.jpg" alt="KBEC Nexus group photo" loading="lazy" />
-      </article>
-
-      <article class="gallery-item">
-        <img src="assets/tdxnignt.jpg" alt="TEDx night event" loading="lazy" />
-      </article>
-
-      <article class="gallery-item">
-        <img src="assets/clubfairfun.jpg" alt="Club fair fun moment" loading="lazy" />
-      </article>
-
-      <article class="gallery-item">
-        <img src="assets/1234.jpg" alt="Event photo highlight" loading="lazy" />
-      </article>
+      <?php foreach ($__gallery as $img): ?>
+        <article class="gallery-item<?= $img['category'] === 'large' ? ' large' : '' ?>">
+          <img src="<?= htmlspecialchars($img['image_path'], ENT_QUOTES) ?>" alt="<?= htmlspecialchars($img['caption'] ?? 'Event gallery photo', ENT_QUOTES) ?>" loading="lazy" />
+        </article>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -3989,38 +3573,26 @@ try {
       </div>
 
       <div class="sponsors-grid" aria-label="Sponsors">
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/GRAMEENPHONE.jpg" alt="Grameenphone logo">
-          <div class="partner-name">GRAMEENPHONE</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/DUTCH-BANGLA BANK.jpg" alt="Dutch-Bangla Bank logo">
-          <div class="partner-name">DUTCH-BANGLA BANK</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/SHAJGOJ.png" alt="Shajgoj logo">
-          <div class="partner-name">SHAJGOJ</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/BKASH.jpg" alt="bKash logo">
-          <div class="partner-name">BKASH</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/OPTIMIZELY.png" alt="Optimizely logo">
-          <div class="partner-name">OPTIMIZELY</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/PROTHOM ALO.png" alt="Prothom Alo logo">
-          <div class="partner-name">PROTHOM ALO</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/MEGHNA GROUP.png" alt="Meghna Group logo">
-          <div class="partner-name">MEGHNA GROUP</div>
-        </div>
-        <div class="partner-tile">
-          <img class="partner-icon" src="assets/SQUARE PHARMA.png" alt="Square Pharma logo">
-          <div class="partner-name">SQUARE PHARMA</div>
-        </div>
+        <?php foreach ($sponsorsList as $sp): ?>
+          <?php if ($sp['website']): ?>
+            <a href="<?= htmlspecialchars($sp['website'], ENT_QUOTES) ?>" target="_blank" class="partner-tile" style="text-decoration: none; color: inherit;">
+          <?php else: ?>
+            <div class="partner-tile">
+          <?php endif; ?>
+
+            <?php if ($sp['logo']): ?>
+              <img class="partner-icon" src="<?= htmlspecialchars($sp['logo'], ENT_QUOTES) ?>" alt="<?= htmlspecialchars($sp['name'], ENT_QUOTES) ?> logo">
+            <?php else: ?>
+              <div class="partner-icon d-flex align-items-center justify-content-center" style="font-size:2.8rem; background: rgba(0, 102, 204, 0.05); width: 96px; height: 96px; border-radius: 12px; margin: 0 auto 12px;">🏢</div>
+            <?php endif; ?>
+            <div class="partner-name"><?= htmlspecialchars($sp['name'], ENT_QUOTES) ?></div>
+
+          <?php if ($sp['website']): ?>
+            </a>
+          <?php else: ?>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
       </div>
   </div>
 </section>
@@ -4036,17 +3608,26 @@ try {
       </div>
 
       <div class="sponsors-grid" aria-label="Partners">
-        <!-- partner tiles (placeholders) -->
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6-3 2-3-2 3-6z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">BUET BIZ CLUB</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">DU BIZ SOCIETY</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">BRAC BEC</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M3 12h18" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">STARTUP BD</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">VENTURE BD</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5v14" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">TECHHIVE BD</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M6 6h12v12H6z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">CFA SOCIETY BD</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M12 3l4 4-4 4-4-4 4-4z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">YOUTHCO BD</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">IDEAHIVE</div></div>
-        <div class="partner-tile"><svg class="partner-icon" viewBox="0 0 24 24" fill="none"><path d="M6 3h12v10a6 6 0 0 1-12 0V3z" stroke="currentColor" stroke-width="1.6"/></svg><div class="partner-name">KUET CSE CLUB</div></div>
+        <?php foreach ($partnersList as $pt): ?>
+          <?php if ($pt['website']): ?>
+            <a href="<?= htmlspecialchars($pt['website'], ENT_QUOTES) ?>" target="_blank" class="partner-tile" style="text-decoration: none; color: inherit;">
+          <?php else: ?>
+            <div class="partner-tile">
+          <?php endif; ?>
+
+            <?php if ($pt['logo']): ?>
+              <img class="partner-icon" src="<?= htmlspecialchars($pt['logo'], ENT_QUOTES) ?>" alt="<?= htmlspecialchars($pt['name'], ENT_QUOTES) ?> logo">
+            <?php else: ?>
+              <svg class="partner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="margin: 0 auto 12px; display: block; color: var(--accent);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <?php endif; ?>
+            <div class="partner-name"><?= htmlspecialchars($pt['name'], ENT_QUOTES) ?></div>
+
+          <?php if ($pt['website']): ?>
+            </a>
+          <?php else: ?>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
       </div>
   </div>
 </section>
@@ -4179,40 +3760,50 @@ try {
   const formStatus = document.getElementById('formStatus');
 
   // Expand or collapse the registration panel from the Join Us CTA button.
-  openRegistrationBtn.addEventListener('click', () => {
-    const isHidden = registrationPanel.hasAttribute('hidden');
-    if (isHidden) {
-      registrationPanel.removeAttribute('hidden');
-      openRegistrationBtn.setAttribute('aria-expanded', 'true');
-      openRegistrationBtn.textContent = 'Close Registration';
-      formStatus.textContent = '';
-      formStatus.className = 'form-status';
-      registrationForm.querySelector('input, select, textarea').focus();
-    } else {
-      registrationPanel.setAttribute('hidden', '');
-      openRegistrationBtn.setAttribute('aria-expanded', 'false');
-      openRegistrationBtn.textContent = 'Register Now';
-    }
-  });
+  if (openRegistrationBtn && registrationPanel && registrationForm) {
+    openRegistrationBtn.addEventListener('click', () => {
+      const isHidden = registrationPanel.hasAttribute('hidden');
+      if (isHidden) {
+        registrationPanel.removeAttribute('hidden');
+        openRegistrationBtn.setAttribute('aria-expanded', 'true');
+        openRegistrationBtn.textContent = 'Close Registration';
+        if (formStatus) {
+          formStatus.textContent = '';
+          formStatus.className = 'form-status';
+        }
+        registrationForm.querySelector('input, select, textarea').focus();
+      } else {
+        registrationPanel.setAttribute('hidden', '');
+        openRegistrationBtn.setAttribute('aria-expanded', 'false');
+        openRegistrationBtn.textContent = 'Register Now';
+      }
+    });
+  }
 
   // Validate required fields and show immediate confirmation feedback after submit.
-  registrationForm.addEventListener('submit', e => {
-    e.preventDefault();
+  if (registrationForm) {
+    registrationForm.addEventListener('submit', e => {
+      e.preventDefault();
 
-    if (!registrationForm.checkValidity()) {
-      registrationForm.reportValidity();
-      formStatus.textContent = 'Please complete all required fields before submitting.';
-      formStatus.className = 'form-status error';
-      return;
-    }
+      if (!registrationForm.checkValidity()) {
+        registrationForm.reportValidity();
+        if (formStatus) {
+          formStatus.textContent = 'Please complete all required fields before submitting.';
+          formStatus.className = 'form-status error';
+        }
+        return;
+      }
 
-    const data = new FormData(registrationForm);
-    const name = (data.get('name') || '').toString().trim();
+      const data = new FormData(registrationForm);
+      const name = (data.get('name') || '').toString().trim();
 
-    formStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration has been submitted.`;
-    formStatus.className = 'form-status success';
-    registrationForm.reset();
-  });
+      if (formStatus) {
+        formStatus.textContent = `Thanks${name ? `, ${name}` : ''}! Your registration has been submitted.`;
+        formStatus.className = 'form-status success';
+      }
+      registrationForm.reset();
+    });
+  }
 
   // ── UPCOMING EVENTS CALENDAR ──
   const EVENT_SEED = [
@@ -4416,16 +4007,54 @@ try {
   async function loadEventCatalog() {
     try {
       const payload = await requestJson('/kbec/api/events.php');
-      EVENT_DATA = Array.isArray(payload.events) && payload.events.length ? payload.events : [...EVENT_SEED];
-      MEMBER_EVENT_TICKETS = Array.isArray(payload.myTickets) ? payload.myTickets : [];
+      EVENT_DATA = Array.isArray(payload.events) && payload.events.length 
+        ? payload.events.map(ev => ({
+            id: ev.id,
+            title: ev.title,
+            type: ev.type,
+            start: ev.event_date_start || ev.start,
+            end: ev.event_date_end || ev.end,
+            deadline: ev.registration_deadline || ev.deadline,
+            venue: ev.location || ev.venue,
+            summary: ev.description || ev.summary,
+            capacity: Number(ev.capacity),
+            remainingSeats: typeof ev.remaining_seats === 'number' ? Number(ev.remaining_seats) : undefined,
+            registeredCount: typeof ev.registered_count === 'number' ? Number(ev.registered_count) : undefined,
+            status: ev.status
+          }))
+        : [...EVENT_SEED];
+      MEMBER_EVENT_TICKETS = Array.isArray(payload.myTickets) 
+        ? payload.myTickets.map(t => ({
+            id: t.id,
+            ticketCode: t.ticket_code,
+            ticketToken: t.ticket_token,
+            note: t.note,
+            registeredAt: t.registered_at,
+            attendedAt: t.attended_at,
+            title: t.event_title,
+            slug: t.slug,
+            type: t.type,
+            venue: t.location || t.venue,
+            start: t.event_date_start || t.start,
+            end: t.event_date_end || t.end
+          }))
+        : [];
     } catch (error) {
+      console.error('API load error, falling back to seed:', error);
       EVENT_DATA = [...EVENT_SEED];
       MEMBER_EVENT_TICKETS = [];
     }
 
-    populateEventSelect();
-    renderCalendar();
-    renderMemberTickets();
+    try {
+      populateEventSelect();
+      renderCalendar();
+      renderMemberTickets();
+    } catch (error) {
+      console.error('Calendar rendering crashed:', error);
+      if (calendarGrid) {
+        calendarGrid.innerHTML = `<div style="grid-column: 1 / -1; padding: 20px; color: red; background: #ffebee; border-radius: 8px; font-family: sans-serif; font-size: 14px; line-height: 1.5;"><strong>Calendar Render Error:</strong> ${error.message}<br><small style="display:block; margin-top: 10px; font-family: monospace; white-space: pre-wrap;">${error.stack}</small></div>`;
+      }
+    }
   }
 
   async function loadMemberProfileIntoEventForm() {
@@ -4519,7 +4148,7 @@ try {
     eventCountValue.textContent = String(upcoming.length);
 
     if (!upcoming.length) {
-      deadlineList.innerHTML = '<p>No future deadlines are scheduled for this month.</p>';
+      deadlineList.innerHTML = '<p style="color:rgba(0,0,0,.45);font-size:13px;padding:8px 0">No upcoming deadlines scheduled.</p>';
       return;
     }
 
@@ -4527,15 +4156,14 @@ try {
       <article class="deadline-card">
         <div class="deadline-card-top">
           <div>
-            <p class="deadline-meta">${eventItem.type}</p>
+            <p class="deadline-card-type">${eventItem.type}</p>
             <h4>${eventItem.title}</h4>
           </div>
-          <span class="deadline-date">${formatShortDate(eventItem.deadlineDate)}</span>
+          <span class="deadline-date-chip">${formatShortDate(eventItem.deadlineDate)}</span>
         </div>
-        <p>${eventItem.summary}</p>
-        <p class="deadline-meta">Event dates: ${formatLongDate(toNoonDate(eventItem.start))}${eventItem.start !== eventItem.end ? ` - ${formatLongDate(toNoonDate(eventItem.end))}` : ''} | Venue: ${eventItem.venue}</p>
-        <p class="deadline-meta">Seats: ${typeof eventItem.remainingSeats === 'number' ? eventItem.remainingSeats : '-'} left of ${eventItem.capacity || '-'}</p>
-        <button type="button" class="event-register-btn" data-event-title="${eventItem.id || eventItem.title}"${eventItem.status === 'Full' || eventItem.status === 'Closed' ? ' disabled' : ''}>${eventItem.status === 'Full' ? 'Sold Out' : (eventItem.status === 'Closed' ? 'Closed' : 'Register for This Event')}</button>
+        <p class="deadline-card-desc">${eventItem.summary}</p>
+        <p class="deadline-card-meta">Event dates: ${formatLongDate(toNoonDate(eventItem.start))}${eventItem.start !== eventItem.end ? ` \u2013 ${formatLongDate(toNoonDate(eventItem.end))}` : ''}<br>Venue: ${eventItem.venue}<br>Seats: ${typeof eventItem.remainingSeats === 'number' ? eventItem.remainingSeats : '-'} left of ${eventItem.capacity || '-'}</p>
+        <button type="button" class="deadline-register-btn" data-event-title="${eventItem.id || eventItem.title}"${eventItem.status === 'Full' || eventItem.status === 'Closed' ? ' disabled' : ''}>${eventItem.status === 'Full' ? 'Sold Out' : (eventItem.status === 'Closed' ? 'Registration Closed' : 'Register for This Event')}</button>
       </article>
     `).join('');
   }
@@ -4639,7 +4267,7 @@ try {
   });
 
   document.addEventListener('click', event => {
-    const button = event.target.closest('.event-register-btn');
+    const button = event.target.closest('.event-register-btn, .deadline-register-btn');
     if (!button) {
       return;
     }
@@ -4716,6 +4344,10 @@ try {
     if (ticket) setEventTicketPanel(ticket);
   });
 
+  console.log("Calendar JS initializing...");
+  if (calendarGrid) {
+    calendarGrid.innerHTML = '<div style="grid-column: 1 / -1; padding: 20px; color: var(--accent-light); font-size: 14px; text-align: center;">Loading events and schedule...</div>';
+  }
   loadMemberProfileIntoEventForm();
   loadEventCatalog();
 
@@ -4751,7 +4383,7 @@ try {
     'Vice President (Internal Affairs)',
     'Vice President (External Affairs)',
     'Vice President (Operations)',
-    'Vice President (Marketing and Branding)',
+    'Vice President (Marketing & Branding)',
     'Treasurer',
     'Organizing Secretary',
     'Joint Secretary',
@@ -4768,186 +4400,35 @@ try {
     'Assistant Secretary of Finance',
     'Assistant Secretary of Logistics',
   ];
-
-  // Team member data – add real members here, multiple people can share the same position
-  const TEAM_DATA = [
-    // ── Row 1: President ──
-    {
-      name: 'Nawaf Md Ittamum',
-      position: 'President',
-      department: 'KUET',
-      bio: 'Leads club strategy, partnerships, and committee coordination with a focus on student-led innovation.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 2: General Secretary ──
-    {
-      name: 'Hisham Hafiz',
-      position: 'General Secretary',
-      department: 'KUET',
-      bio: 'Coordinates committee communication, member onboarding, and internal documentation.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 3: Senior Executive Vice President (SEVP) ──
-    {
-      name: 'Naich Naznafi',
-      position: 'Senior Executive Vice President',
-      department: 'KUET',
-      bio: 'Bridges senior leadership with operational teams to drive club-wide execution.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    {
-      name: 'Prince Al Mahmood Aalif',
-      position: 'Senior Executive Vice President',
-      department: 'KUET',
-      bio: 'Oversees cross-departmental coordination and supports the President in strategic initiatives.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 4: Senior Vice President (SVP) ──
-    {
-      name: 'Awsaf Sinan',
-      position: 'Senior Vice President',
-      department: 'KUET',
-      bio: 'Supports the executive leadership in driving club-wide strategic programs.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 5: Vice President (Internal Affairs) ──
-    {
-      name: 'Arka Braja Prasad Nath',
-      position: 'Vice President (Internal Affairs)',
-      department: 'KUET',
-      bio: 'Manages internal committee relations, HR, and member welfare.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 6: Vice President (External Affairs) ──
-    {
-      name: 'Farhan Anjum Plabon',
-      position: 'Vice President (External Affairs)',
-      department: 'KUET',
-      bio: 'Handles external partnerships, sponsorships, and inter-club relations.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 7: Vice President (Operations) ──
-    {
-      name: 'Zihad Hossen Sazal',
-      position: 'Vice President (Operations)',
-      department: 'KUET',
-      bio: 'Oversees event logistics, operational planning, and execution.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 8: Vice President (Marketing and Branding) ──
-    {
-      name: 'Tasnim Isha',
-      position: 'Vice President (Marketing and Branding)',
-      department: 'KUET',
-      bio: 'Leads visual identity, campaigns, and brand communications.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 9: Treasurer ──
-    {
-      name: 'Rhydita Farnaz',
-      position: 'Treasurer',
-      department: 'KUET',
-      bio: 'Manages club finances, budgets, and financial reporting.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 10: Organizing Secretary ──
-    {
-      name: 'Abdul Jaher',
-      position: 'Organizing Secretary',
-      department: 'KUET',
-      bio: 'Plans and coordinates club events, activities, and organizational logistics.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    {
-      name: 'Sadia Binte Mahadi',
-      position: 'Organizing Secretary',
-      department: 'KUET',
-      bio: 'Supports event organization and ensures smooth coordination across all club activities.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 11: Joint Secretary ──
-    {
-      name: 'Adiba Tahsin',
-      position: 'Joint Secretary',
-      department: 'KUET',
-      bio: 'Supports the General Secretary with documentation and committee coordination.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    {
-      name: 'Nusrat Rahman',
-      position: 'Joint Secretary',
-      department: 'KUET',
-      bio: 'Assists in managing internal communications and committee correspondence.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 12: Secretary of Human Resources ──
-    {
-      name: 'Hasnat Farha Shakha',
-      position: 'Secretary of Human Resources',
-      department: 'KUET',
-      bio: 'Manages member recruitment, onboarding, and human resource affairs of the club.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 13: Secretary of Operations ──
-    {
-      name: 'Abid Hasan',
-      position: 'Secretary of Operations',
-      department: 'KUET',
-      bio: 'Coordinates operational workflows and event execution details.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 14: Assistant General Secretary ──
-    {
-      name: 'Tasnimul Hasan Tabib',
-      position: 'Assistant General Secretary',
-      department: 'KUET',
-      bio: 'Assists the General Secretary in managing club communications and administrative tasks.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    {
-      name: 'Shah Md. Talha',
-      position: 'Assistant General Secretary',
-      department: 'KUET',
-      bio: 'Supports secretarial duties, documentation, and internal coordination.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    {
-      name: 'Tanai Deb Nath',
-      position: 'Assistant General Secretary',
-      department: 'KUET',
-      bio: 'Contributes to club administration, record keeping, and member communications.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Row 15: Assistant Organizing Secretary ──
-    {
-      name: 'Samiu Islam Saad',
-      position: 'Assistant Organizing Secretary',
-      department: 'KUET',
-      bio: 'Assists in event planning, coordination, and organizational logistics.',
-      photo: null,
-      instagram: '#', facebook: '#', linkedin: '#'
-    },
-    // ── Rows below: add more members as their images are provided ──
+  // Team member data – loaded dynamically from the database
+  <?php
+  $bioLookup = [
+      'Nawaf Md Ittamum' => 'Leads club strategy, partnerships, and committee coordination with a focus on student-led innovation.',
+      'Hisham Hafiz' => 'Coordinates committee communication, member onboarding, and internal documentation.',
+      'Naich Naznafi' => 'Bridges senior leadership with operational teams to drive club-wide execution.',
+      'Prince Al Mahmood Aalif' => 'Oversees cross-departmental coordination and supports the President in strategic initiatives.',
+      'Awsaf Sinan' => 'Supports the executive leadership in driving club-wide strategic programs.',
+      'Arka Braja Prasad Nath' => 'Manages internal committee relations, HR, and member welfare.',
+      'Farhan Anjum Plabon' => 'Handles external partnerships, sponsorships, and inter-club relations.',
+      'Zihad Hossen Sazal' => 'Oversees event logistics, operational planning, and execution.',
+      'Tasnim Isha' => 'Leads visual identity, campaigns, and brand communications.',
+      'Rhydita Farnaz' => 'Manages club finances, budgets, and financial reporting.',
+      'Abdul Jaher' => 'Plans and coordinates club events, activities, and organizational logistics.'
   ];
+  $mappedTeam = array_map(function($m) use ($bioLookup) {
+      return [
+          'name' => $m['name'],
+          'position' => $m['position'],
+          'department' => $m['department'] . ($m['batch'] ? ' (' . $m['batch'] . ')' : ''),
+          'bio' => $bioLookup[$m['name']] ?? ($m['position'] . ' of Business & Entrepreneurship Club, KUET.'),
+          'photo' => $m['image'] ? $m['image'] : null,
+          'instagram' => '#',
+          'facebook' => '#',
+          'linkedin' => $m['linkedin'] ?: '#'
+      ];
+  }, $__team);
+  ?>
+  const TEAM_DATA = <?= json_encode($mappedTeam) ?>;
 
   // Build hierarchy container
   const teamHierarchy = document.getElementById('teamHierarchy');
@@ -5571,6 +5052,68 @@ try {
         loadMemberSession();
       }
     });
+  })();
+</script>
+<!-- Announcements Modal -->
+<div class="ann-modal-backdrop" id="announcementsModal" role="dialog" aria-modal="true" aria-labelledby="annModalTitle">
+  <div class="ann-modal">
+    <button type="button" class="close-btn" id="closeAnnModalBtn" aria-label="Close announcements">×</button>
+    <h3 id="annModalTitle">Announcements</h3>
+    <div class="ann-list">
+      <?php if (empty($__announcements)): ?>
+        <p style="text-align:center; color:rgba(255,255,255,0.4); padding:20px 0;">No active announcements at the moment. Check back later!</p>
+      <?php else: ?>
+        <?php foreach ($__announcements as $ann): ?>
+          <div class="ann-item">
+            <span class="ann-item-type <?= htmlspecialchars($ann['type'], ENT_QUOTES) ?>"><?= htmlspecialchars($ann['type'], ENT_QUOTES) ?></span>
+            <h4><?= htmlspecialchars($ann['title'], ENT_QUOTES) ?></h4>
+            <?php if ($ann['body']): ?>
+              <p><?= htmlspecialchars($ann['body'], ENT_QUOTES) ?></p>
+            <?php endif; ?>
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <span class="ann-item-date"><i class="bi bi-clock me-1"></i><?= date('M j, Y', strtotime($ann['created_at'])) ?></span>
+              <?php if ($ann['link'] && $ann['link_label']): ?>
+                <a href="<?= htmlspecialchars($ann['link'], ENT_QUOTES) ?>" target="_blank" class="ann-item-cta"><?= htmlspecialchars($ann['link_label'], ENT_QUOTES) ?> →</a>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const annModal = document.getElementById('announcementsModal');
+    const closeAnnModalBtn = document.getElementById('closeAnnModalBtn');
+    const navAnnBtn = document.getElementById('navAnnBtn');
+    const mobileNavAnnBtn = document.getElementById('mobileNavAnnBtn');
+
+    function openAnnModal(e) {
+      if (e) e.preventDefault();
+      if (annModal) {
+        annModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeAnnModal() {
+      if (annModal) {
+        annModal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (navAnnBtn) navAnnBtn.addEventListener('click', openAnnModal);
+    if (mobileNavAnnBtn) mobileNavAnnBtn.addEventListener('click', openAnnModal);
+    if (closeAnnModalBtn) closeAnnModalBtn.addEventListener('click', closeAnnModal);
+
+    if (annModal) {
+      annModal.addEventListener('click', e => {
+        if (e.target === annModal) closeAnnModal();
+      });
+    }
   })();
 </script>
 </body>
