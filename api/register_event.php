@@ -16,19 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-if (!isLoggedIn()) {
-    http_response_code(401);
-    echo json_encode(['ok' => false, 'message' => 'Please log in to register for events.']);
-    exit;
-}
-
 verifyCsrf();
 
 try {
     $body     = json_decode(file_get_contents('php://input'), true) ?? [];
     $eventRaw = $body['event_id'] ?? $_POST['event_id'] ?? '';
     $note     = trim($body['note'] ?? $_POST['note'] ?? '');
-    $memberId = (int)$_SESSION['member_id'];
     $now      = date('Y-m-d');
 
     if (!$eventRaw) {
@@ -38,6 +31,52 @@ try {
     }
 
     $db = getDB();
+
+    if (isLoggedIn()) {
+        $memberId = (int)$_SESSION['member_id'];
+    } else {
+        $name       = trim($body['name'] ?? $_POST['name'] ?? '');
+        $email      = trim(strtolower($body['email'] ?? $_POST['email'] ?? ''));
+        $phone      = trim($body['phone'] ?? $_POST['phone'] ?? '');
+        $department = trim($body['department'] ?? $_POST['department'] ?? '');
+        $batch      = trim($body['batch'] ?? $_POST['batch'] ?? '');
+
+        if (!$name || !$email) {
+            http_response_code(400);
+            echo json_encode(['ok' => false, 'message' => 'Full Name and Email are required for event registration.']);
+            exit;
+        }
+
+        // Check if member with this email already exists
+        $stmt = $db->prepare("SELECT id FROM `members` WHERE `email` = ?");
+        $stmt->execute([$email]);
+        $existingMember = $stmt->fetch();
+
+        if ($existingMember) {
+            $memberId = (int)$existingMember['id'];
+        } else {
+            // Create a guest/temp member
+            $codeStmt = $db->query("SELECT COUNT(*) FROM `members` WHERE `role` = 'member'");
+            $count    = (int)$codeStmt->fetchColumn();
+            $code     = sprintf('KBEC-2026-%04d', $count + 1);
+
+            // Generate unique guest student ID
+            $studentId = 'GUEST-' . bin2hex(random_bytes(6));
+
+            // Generate a random password hash
+            $randomPassword = bin2hex(random_bytes(16));
+            $hash = password_hash($randomPassword, PASSWORD_BCRYPT, ['cost' => 12]);
+
+            $ins = $db->prepare("
+                INSERT INTO `members`
+                  (member_code, name, student_id, email, password_hash,
+                   department, batch, phone, verified, role)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 'member')
+            ");
+            $ins->execute([$code, $name, $studentId, $email, $hash, $department, $batch, $phone]);
+            $memberId = (int)$db->lastInsertId();
+        }
+    }
 
     // ── Fetch event by ID (integer) or slug (string) ──────────────────
     if (is_numeric($eventRaw)) {

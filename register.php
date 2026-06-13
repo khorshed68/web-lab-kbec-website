@@ -73,19 +73,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 INSERT INTO `members`
                   (member_code, name, student_id, email, password_hash,
                    department, batch, phone, interest, bio, verified, role)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'member')
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 'member')
             ");
             $ins->execute([$code, $name, $student_id, $email, $hash,
                            $department, $batch, $phone, $interest, $bio]);
 
-            $newId  = (int)$db->lastInsertId();
-            $member = $db->prepare("SELECT * FROM `members` WHERE `id` = ?");
-            $member->execute([$newId]);
-            $memberRow = $member->fetch();
-
-            loginMember($memberRow);
-            header('Location: member/dashboard.php?welcome=1');
-            exit;
+            $success = 'Registration successful! Your account is pending administrator verification. You will be able to log in once approved.';
+            $old = [];
         }
     }
 }
@@ -136,105 +130,115 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-logo">KBEC</div>
     <div class="auth-sub">Member Registration</div>
 
-    <h1 class="auth-title">Create your account</h1>
-    <p class="auth-desc">Join the KUET Business &amp; Entrepreneurship Club.</p>
-
-    <?php if ($error): ?>
-      <div class="alert-dark-danger"><?= htmlspecialchars($error, ENT_QUOTES) ?></div>
-    <?php endif; ?>
-
-    <form method="POST" action="">
-      <?= csrfField() ?>
-
-      <!-- Full Name -->
-      <div class="mb-3">
-        <label class="form-label">Full Name <span style="color:#e74c3c">*</span></label>
-        <input type="text" name="name" class="form-control" placeholder="Your full name"
-               value="<?= htmlspecialchars($old['name'] ?? '', ENT_QUOTES) ?>" required>
+    <?php if ($success): ?>
+      <div style="background: rgba(39, 174, 96, 0.12); border: 1px solid rgba(39, 174, 96, 0.3); color: #27ae60; border-radius: 9px; padding: 16px; font-size: .88rem; margin-bottom: 24px; text-align: center; line-height: 1.6;">
+        <i class="bi bi-check-circle-fill me-2" style="font-size: 1.1rem;"></i>
+        <?= htmlspecialchars($success, ENT_QUOTES) ?>
       </div>
+      <p class="text-center" style="margin-top:20px">
+        <a href="login.php" class="btn-kbec" style="display:inline-block; text-decoration:none; text-align:center; padding:12px 24px; width:auto;">Go to Sign In</a>
+      </p>
+    <?php else: ?>
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-desc">Join the KUET Business &amp; Entrepreneurship Club.</p>
 
-      <div class="row-2 mb-3">
-        <!-- Student ID -->
-        <div>
-          <label class="form-label">Student ID <span style="color:#e74c3c">*</span></label>
-          <input type="text" name="student_id" class="form-control" placeholder="21-01-1234"
-                 value="<?= htmlspecialchars($old['student_id'] ?? '', ENT_QUOTES) ?>" required>
+      <?php if ($error): ?>
+        <div class="alert-dark-danger"><?= htmlspecialchars($error, ENT_QUOTES) ?></div>
+      <?php endif; ?>
+
+      <form method="POST" action="">
+        <?= csrfField() ?>
+
+        <!-- Full Name -->
+        <div class="mb-3">
+          <label class="form-label">Full Name <span style="color:#e74c3c">*</span></label>
+          <input type="text" name="name" class="form-control" placeholder="Your full name"
+                 value="<?= htmlspecialchars($old['name'] ?? '', ENT_QUOTES) ?>" required>
         </div>
-        <!-- Batch -->
-        <div>
-          <label class="form-label">Batch <span style="color:#e74c3c">*</span></label>
-          <select name="batch" class="form-select" required>
-            <option value="">Select batch</option>
-            <?php foreach ($batches as $b): ?>
-              <option value="<?= e($b) ?>" <?= ($old['batch'] ?? '') == $b ? 'selected' : '' ?>><?= e($b) ?></option>
+
+        <div class="row-2 mb-3">
+          <!-- Student ID -->
+          <div>
+            <label class="form-label">Student ID <span style="color:#e74c3c">*</span></label>
+            <input type="text" name="student_id" class="form-control" placeholder="21-01-1234"
+                   value="<?= htmlspecialchars($old['student_id'] ?? '', ENT_QUOTES) ?>" required>
+          </div>
+          <!-- Batch -->
+          <div>
+            <label class="form-label">Batch <span style="color:#e74c3c">*</span></label>
+            <select name="batch" class="form-select" required>
+              <option value="">Select batch</option>
+              <?php foreach ($batches as $b): ?>
+                <option value="<?= e($b) ?>" <?= ($old['batch'] ?? '') == $b ? 'selected' : '' ?>><?= e($b) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+        </div>
+
+        <!-- KUET Email -->
+        <div class="mb-3">
+          <label class="form-label">KUET Email <span style="color:#e74c3c">*</span></label>
+          <input type="email" name="email" class="form-control" placeholder="you@kuet.ac.bd"
+                 value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES) ?>" required>
+        </div>
+
+        <!-- Department -->
+        <div class="mb-3">
+          <label class="form-label">Department <span style="color:#e74c3c">*</span></label>
+          <select name="department" class="form-select" required>
+            <option value="">Select department</option>
+            <?php foreach ($departments as $dept): ?>
+              <option value="<?= e($dept) ?>" <?= ($old['department'] ?? '') == $dept ? 'selected' : '' ?>><?= e($dept) ?></option>
             <?php endforeach; ?>
           </select>
         </div>
-      </div>
 
-      <!-- KUET Email -->
-      <div class="mb-3">
-        <label class="form-label">KUET Email <span style="color:#e74c3c">*</span></label>
-        <input type="email" name="email" class="form-control" placeholder="you@kuet.ac.bd"
-               value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES) ?>" required>
-      </div>
-
-      <!-- Department -->
-      <div class="mb-3">
-        <label class="form-label">Department <span style="color:#e74c3c">*</span></label>
-        <select name="department" class="form-select" required>
-          <option value="">Select department</option>
-          <?php foreach ($departments as $dept): ?>
-            <option value="<?= e($dept) ?>" <?= ($old['department'] ?? '') == $dept ? 'selected' : '' ?>><?= e($dept) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <!-- Phone -->
-      <div class="mb-3">
-        <label class="form-label">Phone Number</label>
-        <input type="text" name="phone" class="form-control" placeholder="01XXXXXXXXX"
-               value="<?= htmlspecialchars($old['phone'] ?? '', ENT_QUOTES) ?>">
-      </div>
-
-      <!-- Interest -->
-      <div class="mb-3">
-        <label class="form-label">Area of Interest</label>
-        <select name="interest" class="form-select">
-          <option value="">Select interest</option>
-          <?php foreach (['Startup', 'Finance', 'Marketing', 'Technology', 'Social Enterprise', 'Other'] as $i): ?>
-            <option value="<?= strtolower(e($i)) ?>" <?= ($old['interest'] ?? '') == strtolower($i) ? 'selected' : '' ?>><?= e($i) ?></option>
-          <?php endforeach; ?>
-        </select>
-      </div>
-
-      <!-- Bio -->
-      <div class="mb-3">
-        <label class="form-label">Short Bio</label>
-        <textarea name="bio" class="form-control" rows="2" placeholder="Tell us about yourself..."><?= htmlspecialchars($old['bio'] ?? '', ENT_QUOTES) ?></textarea>
-      </div>
-
-      <div class="row-2 mb-4">
-        <!-- Password -->
-        <div>
-          <label class="form-label">Password <span style="color:#e74c3c">*</span></label>
-          <input type="password" name="password" id="pwd" class="form-control" placeholder="••••••••" required>
-          <div class="pwd-hint">Min 8 chars, 1 uppercase, 1 number</div>
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label">Phone Number</label>
+          <input type="text" name="phone" class="form-control" placeholder="01XXXXXXXXX"
+                 value="<?= htmlspecialchars($old['phone'] ?? '', ENT_QUOTES) ?>">
         </div>
-        <!-- Confirm Password -->
-        <div>
-          <label class="form-label">Confirm Password <span style="color:#e74c3c">*</span></label>
-          <input type="password" name="confirm_password" id="cpwd" class="form-control" placeholder="••••••••" required>
+
+        <!-- Interest -->
+        <div class="mb-3">
+          <label class="form-label">Area of Interest</label>
+          <select name="interest" class="form-select">
+            <option value="">Select interest</option>
+            <?php foreach (['Startup', 'Finance', 'Marketing', 'Technology', 'Social Enterprise', 'Other'] as $i): ?>
+              <option value="<?= strtolower(e($i)) ?>" <?= ($old['interest'] ?? '') == strtolower($i) ? 'selected' : '' ?>><?= e($i) ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
-      </div>
 
-      <button type="submit" class="btn-kbec">Create Account</button>
-    </form>
+        <!-- Bio -->
+        <div class="mb-3">
+          <label class="form-label">Short Bio</label>
+          <textarea name="bio" class="form-control" rows="2" placeholder="Tell us about yourself..."><?= htmlspecialchars($old['bio'] ?? '', ENT_QUOTES) ?></textarea>
+        </div>
 
-    <p class="text-center mt-4" style="font-size:.85rem; color:rgba(255,255,255,.5)">
-      Already have an account?
-      <a href="login.php" class="auth-link">Sign in</a>
-    </p>
+        <div class="row-2 mb-4">
+          <!-- Password -->
+          <div>
+            <label class="form-label">Password <span style="color:#e74c3c">*</span></label>
+            <input type="password" name="password" id="pwd" class="form-control" placeholder="••••••••" required>
+            <div class="pwd-hint">Min 8 chars, 1 uppercase, 1 number</div>
+          </div>
+          <!-- Confirm Password -->
+          <div>
+            <label class="form-label">Confirm Password <span style="color:#e74c3c">*</span></label>
+            <input type="password" name="confirm_password" id="cpwd" class="form-control" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-kbec">Create Account</button>
+      </form>
+
+      <p class="text-center mt-4" style="font-size:.85rem; color:rgba(255,255,255,.5)">
+        Already have an account?
+        <a href="login.php" class="auth-link">Sign in</a>
+      </p>
+    <?php endif; ?>
     <p class="text-center" style="font-size:.78rem;">
       <a href="index.php" class="auth-link" style="opacity:.6">← Back to website</a>
     </p>

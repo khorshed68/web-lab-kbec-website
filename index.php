@@ -37,6 +37,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="csrf-token" content="<?= htmlspecialchars($__csrf, ENT_QUOTES) ?>"/>
   <title>BEC — Business & Entrepreneurship Club</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
@@ -2995,10 +2996,10 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
     <li><a href="#gallery">Gallery</a></li>
     <li><a href="#resources">Resources</a></li>
     <li><a href="#sponsors">Sponsors</a></li>
-    <li><a href="#members">Members</a></li>
+    <li><a href="login.php">Members</a></li>
     <li><a href="#" class="nav-cta nav-cta-announcements" id="navAnnBtn">New Announcements</a></li>
     <li><a href="admin/login.php" class="nav-cta nav-cta-admin">Admin</a></li>
-    <li><a href="#join" class="nav-cta">Join Us</a></li>
+    <li><a href="register.php" class="nav-cta">Join Us</a></li>
   </ul>
 
   <div class="hamburger" id="hamburger">
@@ -3015,10 +3016,10 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
   <a href="#gallery">Gallery</a>
   <a href="#resources">Resources</a>
   <a href="#sponsors">Sponsors</a>
-  <a href="#members">Members</a>
+  <a href="login.php">Members</a>
   <a href="#" id="mobileNavAnnBtn">New Announcements</a>
   <a href="admin/login.php">Admin</a>
-  <a href="#join">Join Us</a>
+  <a href="register.php">Join Us</a>
 </div>
 
 <!-- PHP Announcements Bar -->
@@ -3941,6 +3942,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
       ...options,
       headers: {
         ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || '',
         ...(options.headers || {})
       }
     });
@@ -4057,7 +4059,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
 
   async function loadMemberProfileIntoEventForm() {
     try {
-      const result = await requestJson('/api/member/me');
+      const result = await requestJson('/kbec/api/me.php');
       const member = result.member || {};
       const fields = {
         name: document.getElementById('eventRegName'),
@@ -4285,6 +4287,11 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
 
     const data = new FormData(eventRegistrationForm);
     const eventId = (data.get('event') || '').toString().trim();
+    const name = (data.get('name') || '').toString().trim();
+    const email = (data.get('email') || '').toString().trim();
+    const phone = (data.get('phone') || '').toString().trim();
+    const department = (data.get('department') || '').toString().trim();
+    const batch = (data.get('batch') || '').toString().trim();
     const note = (data.get('note') || '').toString().trim();
 
     eventFormStatus.textContent = 'Registering your seat...';
@@ -4292,7 +4299,15 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
 
     requestJson('/kbec/api/register_event.php', {
       method: 'POST',
-      body: JSON.stringify({ event_id: eventId, note })
+      body: JSON.stringify({
+        event_id: eventId,
+        name: name,
+        email: email,
+        phone: phone,
+        department: department,
+        batch: batch,
+        note: note
+      })
     })
       .then(result => {
         const ticket = result.ticket;
@@ -4860,6 +4875,7 @@ $partnersList = array_filter($__sponsors, fn($s) => $s['category'] === 'Partner'
         ...options,
         headers: {
           ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content || '',
           ...(options.headers || {})
         }
       });
